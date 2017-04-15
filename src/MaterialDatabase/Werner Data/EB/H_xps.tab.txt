@@ -1,0 +1,5 @@
+Binding energies, Photoelectric cross sections and asymmetry parameters for H
+--------------------------------------------------------------------------------
+subshell  EB (eV)  PCS (Al,kBarn)  Beta (Al)      PCS (Mg,kBarn)  Beta (Mg)  
+1S1/2      14.000  6.0486457E-003  1.9842713E+000 1.0716054E-002  1.9866006E+000
+--------------------------------------------------------------------------------

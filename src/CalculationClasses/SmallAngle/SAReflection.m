@@ -62,16 +62,10 @@ classdef SAReflection < SABase
                             R_l(:,:,n+1) = (1-lambda)^n/n*(1/(1-lambda*x_l(i))^n-1)*B;
                         end
                     else
-                        %ig1 = gammainc(tau*(1-lambda*x_l(i))*mm,1);
-                        %ig2 = gammainc(tau*mm,1);
-                        %g1 = gamma(tau*(1-lambda*x_l(i))*mm);
-                        %g2 = gamma(tau*mm);
                         for n=1:obj.N_in
                             % R_l(:,:,n+1) = (1-lambda)^n/n*(gammainc(tau*(1-lambda*x_l(i))*mm,n)./(1-lambda*x_l(i))^n-gammainc(tau*mm,n)).*B;
                             R_l(:,:,n+1) = (1-lambda)^n/n*(gammainc(tau*(1-lambda*x_l(i))*mm,n)./(1-lambda*x_l(i))^n-gi(:,:,n)).*B;
-                            %R_l(:,:,n+1) = (1-lambda)^n/n*(ig1./(1-lambda*x_l(i))^n-ig2).*B;
-                            %ig1 = n*ig1 - (tau*mm).^n.*exp(-tau*mm);%./g1;
-                            %ig2 = n*ig2 - (tau*(1-lambda*x_l(i))*mm).^n.*exp(-tau*(1-lambda*x_l(i))*mm);%./g2;
+
                         end
                     end
                 end

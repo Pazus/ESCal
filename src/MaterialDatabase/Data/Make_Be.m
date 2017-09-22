@@ -5,11 +5,11 @@ Be.M = 9.01218;
 Be.Z = 4;
 Be.Density = 1.848; %g/cm^3
 Be.Density = Be.Density*10^-21/Be.M*6.022*10^23;
-Be.NvTPP = 1;
-Be.NvSGS = 1;
+Be.NvTPP = 2;
+Be.NvSGS = 2;
 Be.Eg = 0;
-Be.Ep = 7.99; %free-electron plasmon energy
-Be.Ef = 4.74; %Fermi energy
+Be.Ep = 18.44; %free-electron plasmon energy
+Be.Ef = 14.3; %Fermi energy
 
 E0 = [100:20:500 600:100:2500 2750:250:5000 5500:500:40000]';
 Be.Elastic.x = zeros(numel(E0),1);

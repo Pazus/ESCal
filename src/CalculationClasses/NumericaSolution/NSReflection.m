@@ -36,6 +36,10 @@ classdef NSReflection < NSBase
         R_temp                                  % Buffer of solutions. Used on d < Inf
     end
     
+    properties 
+        withoutNonliniearPart = false;
+    end
+    
     methods
 
         function obj = NSReflection(Layer)
@@ -85,7 +89,12 @@ classdef NSReflection < NSBase
             obj.x_in = sparse(1:N, 1:N, (1-lambda) ./ x);
             
             obj.C0 = lambda * obj.x_m;
-            obj.D0 = symmetrize(w * obj.C0 * w);
+            if obj.withoutNonliniearPart
+                obj.D0 = 0;
+            else
+                obj.D0 = symmetrize(w * obj.C0 * w);
+            end
+%             obj.D0 = symmetrize(w * obj.C0 * w);
         end
         
         function SetCrossection(obj,m)

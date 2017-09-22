@@ -42,14 +42,16 @@ classdef SATransmition < SAReflection
             
             if isfinite(tau)
                                 
-                for i=1:obj.LegandePolinomialsCount+1  
-
+                for i=1:obj.LegandePolinomialsCount+1
+                    
                     mm_bottom = bsxfun(@minus,1./mu',(1-Base(i))./mu);
-%                     mm_bottom = bsxfun(@minus,1./mu,(1-Base(i))./mu');
+                    if all(all(mm_bottom ~= 0))
+    %                     mm_bottom = bsxfun(@minus,1./mu,(1-Base(i))./mu');
 
-%                     T_l(:,:,1,i)   = Base(i) .* bsxfun(@minus, exp(-tau*(1-Base(i))./mu), exp(-tau./mu'))   ./ mm_bottom;
-                    T_l_temp   = obj.norm*Base(i) .* bsxfun(@minus, exp(-tau*(1-Base(i))./mu), exp(-tau./mu'))   ./ mm_bottom;
-                    T_l(:,:,1,i)   = symmetrize(T_l_temp);
+    %                     T_l(:,:,1,i)   = Base(i) .* bsxfun(@minus, exp(-tau*(1-Base(i))./mu), exp(-tau./mu'))   ./ mm_bottom;
+                        T_l_temp   = obj.norm*Base(i) .* bsxfun(@minus, exp(-tau*(1-Base(i))./mu), exp(-tau./mu'))   ./ mm_bottom;
+                        T_l(:,:,1,i)   = symmetrize(T_l_temp);
+                    end
 
                 end
 

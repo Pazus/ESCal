@@ -47,7 +47,11 @@ classdef NSTransmition < NSReflection
                 % Экспанента описывает поток, а плотность потока ~ mu
                 % Косинусы сокращаются
                 obj.exp_t0 = sparse(1:obj.N, 1:obj.N, exp(-obj.current_tau ./ obj.mu_mesh)); %./obj.x
-                C = obj.h * obj.exp_t0 * lambda * (obj.x_p + obj.x_m * obj.w * obj.R(:,:,1)) + obj.Ct_prev(:,:,1);
+                if obj.withoutNonliniearPart
+                    C = obj.h * obj.exp_t0 * lambda * (obj.x_p) + obj.Ct_prev(:,:,1);
+                else
+                    C = obj.h * obj.exp_t0 * lambda * (obj.x_p + obj.x_m * obj.w * obj.R(:,:,1)) + obj.Ct_prev(:,:,1);
+                end
                 obj.T(:,:,1) = C/obj.Bt;
             end
         end
@@ -64,7 +68,11 @@ classdef NSTransmition < NSReflection
         function SolveForNInelasticScatterings(obj, i)
             obj.SolveForNInelasticScatterings@NSReflection(i);
             
-            obj.CwR(:,:,i-1) = obj.C0*obj.w*obj.R(:,:,i);
+            if obj.withoutNonliniearPart
+                obj.CwR(:,:,i-1) = 0;
+            else
+                obj.CwR(:,:,i-1) = obj.C0*obj.w*obj.R(:,:,i);
+            end
             
             if ~obj.isInfLayer
                 Ct = obj.CalculateCt(i);
@@ -218,10 +226,16 @@ classdef NSTransmition < NSReflection
                 exp_t = exp_t.*(obj.current_tau*x_in/(j-1));
                 Ct = Ct + (exp_t+obj.T(:,:,j)*w)*CwR_inv(:,:,j-1);
             end
-
-            Ct = Ct + (exp_t.*diag(obj.mu_mesh) + obj.T(:,:,i-1))*x_in  ... 
-                + exp_t.*(obj.current_tau*x_in/(i-1))*obj.Layer.Material.lambda*(obj.x_p+obj.x_m*w*obj.R(:,:,1)) ...
-                + obj.ETX * obj.R(:,:,i);
+            
+            
+            if obj.withoutNonliniearPart
+                Ct = Ct + (exp_t.*diag(obj.mu_mesh) + obj.T(:,:,i-1))*x_in  ... 
+                    + exp_t.*(obj.current_tau*x_in/(i-1))*obj.Layer.Material.lambda*(obj.x_p);
+            else
+                Ct = Ct + (exp_t.*diag(obj.mu_mesh) + obj.T(:,:,i-1))*x_in  ... 
+                    + exp_t.*(obj.current_tau*x_in/(i-1))*obj.Layer.Material.lambda*(obj.x_p+obj.x_m*w*obj.R(:,:,1)) ...
+                    + obj.ETX * obj.R(:,:,i);
+            end
 
             Ct = obj.h*Ct + obj.Ct_prev(:,:,i);
 

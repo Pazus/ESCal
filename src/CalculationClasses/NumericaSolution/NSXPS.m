@@ -38,8 +38,11 @@ classdef NSXPS < NSTransmition
             obj.SolveForElasticScattering@NSTransmition;
             
             obj.Bq = obj.AR0';
-            C = obj.F_m + obj.F_p * obj.w * obj.R(:,:,1);
-            
+            if obj.withoutNonliniearPart
+                C = obj.F_m;
+            else
+                C = obj.F_m + obj.F_p * obj.w * obj.R(:,:,1);
+            end
             
             if ~obj.isInfLayer
                 obj.Bq = obj.Bq + obj.I;

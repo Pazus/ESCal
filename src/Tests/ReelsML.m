@@ -11,9 +11,9 @@ theta0 = 0;
 theta  = 45; phi=0;
 
 %% Layers settings
-Layers = [Layer(Mat1,3) Layer(Mat2)]; %two layers Au-Si
+%Layers = [Layer(Mat1,3) Layer(Mat2)]; %two layers Au-Si
 % Layers = [Layer(Mat1)]; %for one layer of Au
-% Layers = [Layer(Mat1,3) Layer(Mat2,1) Layer(Mat1)]; %for three layers Au-Si-Au
+Layers = [Layer(Mat1,1) Layer(Mat2,1) Layer(Mat1)]; %for three layers Au-Si-Au
 
 %% Methods settings
 % Methods = {'SLA'};

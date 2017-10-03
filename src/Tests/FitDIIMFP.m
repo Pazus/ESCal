@@ -91,4 +91,5 @@ plot(E0-Rez.energy_mesh_full-0.15,Rez.EnergyDistribution,'-','LineWidth',2) %cal
 title(['E_0=', num2str(E0), ' eV'])
 xlabel('{\itE}, eV')
 ylabel('Intensity  {\itI}, rel.un.')
+legend('Experimental data','Calculation')
 grid on

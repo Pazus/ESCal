@@ -1,4 +1,4 @@
-classdef TransmissionMultiLayer_v2<BaseMultiLayer
+classdef TransmissionMultiLayer<BaseMultiLayer
     
     properties
         %          z; %заменить все tau на z, вектор длиной в количество слоев
@@ -10,8 +10,8 @@ classdef TransmissionMultiLayer_v2<BaseMultiLayer
     end
     
     methods
-        function obj = TransmissionMultiLayer_v2 (Layers, CalculationMethod)
-            if nargin==1 || isempty(CalculationMethod);
+        function obj = TransmissionMultiLayer (Layers, CalculationMethod)
+            if nargin==1 || isempty(CalculatonMethod);
                 CalculationMethod = {'NS'};             
             end
             obj = obj@BaseMultiLayer(Layers, CalculationMethod);

@@ -5,7 +5,7 @@ function ELF = eps_sum(osc)
    Calculates the imaginary part of the inverse dielectric function Im[-1/eps]
    for the energy w and momentum transfer q on the basis of four ELF models.
    Input parameter:
-   osc - field with oscilattors data including:
+   osc is the field of oscilattors data including the follows:
          1. osc.A     - amplitudes
          2. osc.G     - damping coefficients gamma
          3. osc.Om    - plasmon (resonance) frequency omega
@@ -13,8 +13,16 @@ function ELF = eps_sum(osc)
          5. osc.u     - a quantity related to the band
                         gap (is used only for Mermin_LL)
          6. osc.model - type of model: Drude, Lindhard, Mermin, Mermin_LL
-    In the case of Mermin and Mermin_LL models the array of q should always
-    start from 0.01 (instead of 0).
+         7. osc.eloss - energy loss array (e.g. 0:0.5:100 eV)
+         8. osc.qtran - momentum transfer array (e.g. 0:0.01:10 A^-1)
+                        In the case of Mermin and Mermin_LL models the array of q should always
+                        start from 0.01 (instead of 0).
+         9. osc.Ef    - the Fermi energy
+        10. osc.beps  - the background dielectric constant due to the polarizability of the core electrons
+                        osc.beps = 1 assuming all electrons are free
+        11. osc.egap  - the band gap energy (for insulators)
+    
+    For more details see Vos, M., and Grande, P. L. (2017) Extracting the dielectric function from high-energy REELS measurements. Surf. Interface Anal., 49: 809–821. doi: 10.1002/sia.6227
 %}
 %%
 

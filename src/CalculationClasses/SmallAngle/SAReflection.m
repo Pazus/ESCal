@@ -85,16 +85,13 @@ classdef SAReflection < SABase
         end
         
         function ExpandCrossSections(obj)
-            if obj.Layer.Material.IsManualDECS
-%                 DECS = interp1(cos(obj.Layer.Material.DECS_mu'),obj.Layer.Material.DECS',obj.mu_mesh_temp);
-%                 obj.x_l = ExpandFunctionByLegandrePolinomials(obj.mu_mesh_temp,DECS,obj.LegandePolinomialsCount,obj.mu_weight_temp);
-                obj.x_l = ExpandFunctionByLegandrePolinomials(cos(obj.Layer.Material.DECS_mu'),obj.Layer.Material.DECS,obj.LegandePolinomialsCount);
-            else
-%                 DECS = obj.Layer.Material.CalculateDECS(obj.mu_mesh_temp)';
-%                 obj.x_l = ExpandFunctionByLegandrePolinomials(obj.mu_mesh_temp,DECS,obj.LegandePolinomialsCount,obj.mu_weight_temp);
-                obj.x_l = obj.Layer.Material.Calculate_Leg_coefs(obj.LegandePolinomialsCount);
-                obj.x_l = obj.x_l / obj.x_l(1);
-            end
+            obj.x_l = obj.Layer.Material.Calculate_Leg_coefs(obj.LegandePolinomialsCount);
+%             if obj.Layer.Material.IsManualDECS
+%                 obj.x_l = ExpandFunctionByLegandrePolinomials(cos(obj.Layer.Material.DECS_mu'),obj.Layer.Material.DECS,obj.LegandePolinomialsCount);
+%             else
+%                 obj.x_l = obj.Layer.Material.Calculate_Leg_coefs(obj.LegandePolinomialsCount);
+%                 obj.x_l = obj.x_l / obj.x_l(1);
+%             end
         end
         
         

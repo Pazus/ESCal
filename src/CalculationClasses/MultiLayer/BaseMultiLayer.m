@@ -270,11 +270,13 @@ classdef BaseMultiLayer < handle
                 
                 curLayerLm = zeros([sL(1:2) obj.N_in+1]);
                 curLayerLm(:,:,1) = diag(exp(-tau_tot./mu));
+
                 if isfinite(tau_tot) 
                     for j=1:obj.N_in
                         curLayerLm(:,:,j+1) = curLayerLm(:,:,j).*diag((1-lambda)*tau_tot/j./mu);
                     end    
                 end    
+
                 Lm = reshape(reshape(curLayerLm,sL(1)^2,[])*EnDistr,sL(1),sL(2),[]);
                 
                 for m=0:M

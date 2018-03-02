@@ -10,6 +10,8 @@ classdef Material < CoreMaterial
         Eg;
         Ef;
         Ep;
+        
+        isManualDECSLegCoefs = false;
 
     end
     
@@ -125,8 +127,16 @@ classdef Material < CoreMaterial
                 return;
             end
             
-            if obj.IsManualDECS
+            if obj.IsManualDECS && ~obj.isManualDECSLegCoefs
                 error('Legendre expansion coefficients calculation for manually set DECS is not yet implemented');
+            end
+            
+            if obj.isManualDECSLegCoefs 
+                if size(obj.DECS_l,2) < NLeg+1
+                    error('Not enought DECS legandre coefs were manually set');
+                end
+                x_l = obj.DECS_l;
+                return;
             end
             
             if nargin<2
@@ -224,9 +234,27 @@ classdef Material < CoreMaterial
             
             if nargout == 0
                 obj.DECS_l = x_l;
-            end;
+            end
             
         end
+        
+        function setManualDECSLegCoefs(obj, coefs) 
+            obj.DECS_l = coefs(:)';
+            obj.isManualDECSLegCoefs = true;
+            
+            if ~obj.IsManualDECS
+                if isempty(obj.DECS_mu)
+                    obj.DECS_mu = 0:pi/360:pi;
+                    obj.DECS_mu(end) = pi;
+                end
+                    
+                P = Legendre_mu(cos(obj.DECS_mu),0,numel(coefs)-1);
+                n_ = (0:(numel(coefs)-1))+0.5;
+                DECS_temp = (coefs(:)'.*n_)*P;
+                DECS_temp = DECS_temp / abs(trapz(cos(obj.DECS_mu),DECS_temp));
+                obj.SetManualDECS(obj.DECS_mu(:), DECS_temp');
+            end
+        end        
         
         function CalculateDIIMFP(obj, varargin)
             % CalculateDIIMFP  Calculate Differential Inelastic Mean Free Path (DIIMFP) for the Material.

@@ -37,24 +37,25 @@ disp(Y);
 w = osc.eloss;
 q = osc.qtran;
 
-ELF = zeros(length(w),length(q));
+ELF = zeros(numel(w),numel(q));
+
+if strcmp( osc.model,'Drude')
+    eps_re = osc.beps*ones(numel(w),numel(q));
+    eps_im = zeros(numel(w),numel(q));
+    for j=1:length(osc.A)      
+        [epsDrud_re, epsDrud_im] = Drude(q,w,osc.Om(j),osc.G(j),osc.alpha,osc.Ef);
+        eps_re = eps_re - osc.A(j)*epsDrud_re;
+        eps_im(w>osc.egap,:) = eps_im(w>osc.egap,:) + osc.A(j)*epsDrud_im(w>osc.egap,:);
+    end
+    eps = complex(eps_re,eps_im);
+    ELF = imag(-1./eps);
+else
 
     for k=1:length(q)
         for i=1:length(w)
             eps1 = complex(0.0,0.0);
-            eps_re = osc.beps;
-            eps_im = 0;
             for j=1:length(osc.A)      
                 switch osc.model
-                    case 'Drude'
-                        epsDrud_re = Drude_re(q(k),w(i),osc.Om(j),osc.G(j),osc.alpha,osc.Ef);
-                        epsDrud_im = Drude_im(q(k),w(i),osc.Om(j),osc.G(j),osc.alpha,osc.Ef);
-                        eps_re = eps_re - osc.A(j)*epsDrud_re;
-                        if (w(i)>osc.egap)
-                            eps_im = eps_im + osc.A(j)*epsDrud_im;
-                        else
-                            eps_im = eps_im + 0;
-                        end
                     case 'Lindhard'
                         w_q = osc.Om(j) + 0.5*osc.alpha * q(k)*q(k);
                         epsLind = Lindhard(q(k),w(i),osc.G(j),w_q);
@@ -71,13 +72,10 @@ ELF = zeros(length(w),length(q));
                         error('Choose the correct model name: Drude,Lindhard,Mermin,Mermin_LL');
                 end                
             end 
-            switch osc.model
-                case 'Drude'
-                    eps = complex(eps_re,eps_im);
-                otherwise
-                    eps = complex(1,0)/eps1;
-            end
+            eps = complex(1,0)/eps1;
+
             ELF(i,k) = imag(-1/eps);
         end
     end 
+end
 end

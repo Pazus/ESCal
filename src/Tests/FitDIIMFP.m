@@ -68,7 +68,7 @@ for i_layer = 1:length(E_pl)
     Mat{i_layer}.SetManualDIIMFP(E0-delta_CS',NDIIMFP');
 end
 x_in=struct('delta', delta_CS , 'I', I_in);
-file_name = ['Data_x_in\x_in_Al_', num2str(round(E0/10)*10) ];
+file_name = ['Data_x_in_Al_', num2str(round(E0/10)*10) ];
 file_name=[file_name, '.mat'];
 save(file_name,'x_in');
 

@@ -75,7 +75,7 @@ elseif strcmp( osc.model,'DrudeLindhard')
         %plot(w,imag(-1./complex(eps_re,eps_im)));
         %plot(w,eps_im);
     end
-    eps = complex(eps_re,eps_im);
+    %eps = complex(eps_re,eps_im);
     %ELF = imag(-1./eps);
     ELF = eps_im;
 else

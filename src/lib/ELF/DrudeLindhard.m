@@ -31,8 +31,9 @@ function [eps_re, eps_im]=DrudeLindhard(q,w_global,omega0,gamma,alpha,FermiEnerg
 
     
     if isIonization
-        eps_re(w_global<w_at_q,:)=0;
-        eps_im(w_global<w_at_q,:)=0;
+        ind = bsxfun(@lt,w_global,w_at_q);
+        eps_re(ind)=0;
+        eps_im(ind)=0;
     end
     
 end

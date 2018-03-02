@@ -1,4 +1,4 @@
-function [eps_re, eps_im]=Drude(q,w_global,omega0,gamma,alpha,FermiEnergy, isIonization)
+function [eps_re, eps_im]=DrudeLindhard(q,w_global,omega0,gamma,alpha,FermiEnergy, isIonization)
 
     if nargin < 7
         isIonization=false;
@@ -23,13 +23,12 @@ function [eps_re, eps_im]=Drude(q,w_global,omega0,gamma,alpha,FermiEnergy, isIon
     end
     
     
+    mm = bsxfun(@minus,w_global.^2,w_at_q.^2).^2 + repmat(w_global.^2*gamma^2,1,sq);
     
-    %divisor = (w_global*w_global - w_at_q*w_at_q)*(w_global*w_global - w_at_q*w_at_q) + w_global*w_global*gamma * gamma;
-    mm = bsxfun(@minus,w_global.^2,w_at_q.^2);
-    divisor = mm.^2 + repmat(w_global.^2*gamma^2,1,sq);
-% 	re_oneovereps =1.0+(omega0*omega0)*(w_global*w_global - w_at_q*w_at_q) / divisor;   
-    eps_re = mm ./ divisor;
-    eps_im = repmat(w_global*gamma,1,sq) ./ divisor;
+    
+    eps_re = bsxfun(@minus,w_global.^2,w_at_q.^2)*(omega0.^2)./mm;
+    eps_im = gamma*(omega0.^2)*repmat(w_global,1,sq)./mm;
+
     
     if isIonization
         eps_re(w_global<w_at_q,:)=0;

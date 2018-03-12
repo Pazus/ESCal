@@ -11,7 +11,7 @@ function diimfp = nrm_diimfp_penn(osc,E0)
    \param [in] E0 - the energy for which the diimfp is to be calculated
 %}
 %%
-    a0 = 0.529177 ;      %!< Bohr Radius in Angstroem 
+
     ELF = eps_sum(osc);
 
     w = osc.eloss;

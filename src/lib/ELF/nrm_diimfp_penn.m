@@ -14,7 +14,7 @@ function diimfp = nrm_diimfp_penn(osc,E0)
 
     ELF = eps_sum(osc);
 
-    w = osc.eloss;
+    w = osc.eloss/h2ev;
     
 %     loglog(w,ELF);
 %     xlabel('Energy loss, eV');
@@ -27,7 +27,7 @@ function diimfp = nrm_diimfp_penn(osc,E0)
             x_in(i) = 0;
         else
             hhw=w(i);
-            wpmax=2*(hhw-E0+sqrt(E0*(E0-hhw)));
+            wpmax=2*(hhw-E0/h2ev+sqrt(E0/h2ev*(E0/h2ev-hhw)));
             i1=0;
             k=2;
             quit=false;

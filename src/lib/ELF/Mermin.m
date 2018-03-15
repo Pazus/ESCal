@@ -1,6 +1,6 @@
-function eps=Mermin(q, omega, gamma,omega0,alpha, isIonization)
+function eps=Mermin(q, omega, gamma,omega0, isIonization)
 
-    if nargin < 6
+    if nargin < 5
         isIonization=false;
     end
     
@@ -9,8 +9,8 @@ function eps=Mermin(q, omega, gamma,omega0,alpha, isIonization)
     
     q=q(:)';
     omega = omega(:);
-
-    om_at_q = omega0 + 0.5*alpha*q.^2;
+    
+    om_at_q = omega0;
     
     g_over_w = gamma ./ omega;
     z1 = ones(size(g_over_w)) + 1j*g_over_w; % omega should be unequal 0

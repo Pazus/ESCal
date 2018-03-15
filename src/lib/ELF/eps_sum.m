@@ -26,9 +26,7 @@ function ELF = eps_sum(osc)
 %}
 %%
 
-if strcmp(osc.model,'Drude') %|| strcmp(osc.model,'DrudeLindhard')
-    osc = convert2au(osc); %converts to atomic units, this is necessary for Drude model
-end
+osc = convert2au(osc); %converts to atomic units, this is necessary for Drude model
 
 elec_density = sum(osc.A)/4/pi;
 Y = ['Electron density is ',num2str(elec_density),' (in a.u.)'];
@@ -40,6 +38,7 @@ q = osc.qtran;
 ELF = zeros(numel(w),numel(q));
 
 if strcmp( osc.model,'Drude')
+    
     eps_re = osc.beps*ones(numel(w),numel(q));
     eps_im = zeros(numel(w),numel(q));
     for j=1:length(osc.A)
@@ -82,11 +81,11 @@ elseif strcmp( osc.model,'Mermin')
     eps1 = zeros(numel(w),numel(q));
     for j=1:length(osc.A)
         if isfield(osc,'numion') && j>length(osc.A) - osc.numion
-            epsMerm = Mermin(q,w,osc.G(j),osc.Om(j),osc.alpha,true);
+            epsMerm = Mermin(q,w,osc.G(j),osc.Om(j),true);
             ind = bsxfun(@ne,epsMerm,0);
             eps1(ind) = eps1(ind) + osc.A(j)*(complex(1,0)./epsMerm(ind));
         else
-            epsMerm = Mermin(q,w,osc.G(j),osc.Om(j),osc.alpha,false);
+            epsMerm = Mermin(q,w,osc.G(j),osc.Om(j),false);
             eps1 = eps1 + osc.A(j)*(complex(1,0)./epsMerm);
         end
     end
@@ -96,11 +95,11 @@ elseif strcmp( osc.model,'Mermin_LL')
     eps1 = zeros(numel(w),numel(q));
     for j=1:length(osc.A)
         if isfield(osc,'numion') && j>length(osc.A) - osc.numion
-            epsMerm = Mermin_LL(q,w,osc.G(j),osc.Om(j),osc.u,osc.alpha,true);
+            epsMerm = Mermin_LL(q,w,osc.G(j),osc.Om(j),osc.u,true);
             ind = bsxfun(@ne,epsMerm,0);
             eps1(ind) = eps1(ind) + osc.A(j)*(complex(1,0)./epsMerm(ind));
         else
-            epsMerm = Mermin_LL(q,w,osc.G(j),osc.Om(j),osc.u,osc.alpha,false);
+            epsMerm = Mermin_LL(q,w,osc.G(j),osc.Om(j),osc.u,false);
             eps1 = eps1 + osc.A(j)*(complex(1,0)./epsMerm);
         end       
     end

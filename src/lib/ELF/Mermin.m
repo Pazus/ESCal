@@ -21,8 +21,11 @@ function eps=Mermin(q, omega, gamma,omega0, isIonization)
     bottom = ones(sw,sq) + bsxfun(@times,1j*g_over_w,z2)./z3;
     eps = ones(sw,sq) + top./bottom;
     
-    if isIonization
-        ind = bsxfun(@lt,omega,om_at_q);
-        eps(ind)=0;
-    end
+%     if isIonization
+%         for i=1:sq
+%             [omax posmax]=max(imag(-1./eps(:,i)));
+%             ind = bsxfun(@lt,omega,omega(posmax));
+%             eps(ind,i)=0;
+%         end
+%     end
 end

@@ -6,17 +6,17 @@ function eps=eps_LLX(q,omega,gamma,omega0,omega_gap)
     q=q(:)';
     omega = omega(:);
 
-    omega_minus_square = bsxfun(@power,omega,2)-repmat(omega_gap^2,sw,1)-repmat(gamma^2,sw,1) + 1j*2.0*omega*gamma;
+    omega_minus_square = omega.^2 - repmat(omega_gap^2,sw,1) - repmat(gamma^2,sw,1) + 1j*2.0*omega*gamma;
     r = abs(omega_minus_square);
     theta = atan2(imag(omega_minus_square), real(omega_minus_square));
     omega_minus = bsxfun(@times,sqrt(r),cos(theta/2.0)) + 1j*bsxfun(@times,sqrt(r),sin(theta/2.0));
     if bsxfun(@ge,real(omega_minus),0.0)
         eps = Lindhard(q,real(omega_minus),imag(omega_minus),omega0);
     else
-        n_dens = bsxfun(@times,omega0,omega0) ./ (4.0*pi);
-        E_f = 0.5*(3.0 * pi^2*n_dens).^(2.0 / 3.0);
-        v_f = 2 * E_f.^0.5;   % v_f=k_f in atomic units
-        DeltaSquare = -bsxfun(@rdivide,omega_minus_square, (E_f.^2));
+        n_dens = omega0^2 / (4.0*pi);
+        E_f = 0.5*(3.0 * pi^2*n_dens)^(2.0 / 3.0);
+        v_f = (2 * E_f)^0.5;   % v_f=k_f in atomic units
+        DeltaSquare = - omega_minus_square ./ (E_f^2);
         r = abs(DeltaSquare);
         theta = atan2(imag(DeltaSquare), real(DeltaSquare));
         Delta = bsxfun(@times,sqrt(r),cos(theta / 2.0)) + 1j*bsxfun(@times,sqrt(r),sin(theta / 2.0));

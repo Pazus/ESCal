@@ -26,7 +26,7 @@ function ELF = eps_sum(osc)
 %}
 %%
 
-osc = convert2au(osc); %converts to atomic units, this is necessary for Drude model
+osc = convert2au(osc); %converts to atomic units
 
 elec_density = sum(osc.A)/4/pi;
 Y = ['Electron density is ',num2str(elec_density),' (in a.u.)'];
@@ -88,6 +88,8 @@ elseif strcmp( osc.model,'Mermin')
             epsMerm = Mermin(q,w,osc.G(j),osc.Om(j),false);
             eps1 = eps1 + osc.A(j)*(complex(1,0)./epsMerm);
         end
+%         eps_temp = osc.A(j)*(complex(1,0)./epsMerm); %to plot oscillators
+%         plot(w,imag(-1./(complex(1,0)./eps_temp)));
     end
     eps = complex(1,0)./eps1;
     ELF = imag(-1./eps);

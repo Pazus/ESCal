@@ -4,6 +4,8 @@ function eps=Mermin(q, omega, gamma,omega0, isIonization)
         isIonization=false;
     end
     
+    sq = numel(q);
+    
     q=q(:)';
     omega = omega(:);
     
@@ -18,11 +20,11 @@ function eps=Mermin(q, omega, gamma,omega0, isIonization)
     bottom = bsxfun(@plus,1,bsxfun(@times,complex(0,g_over_w),z2)./z3);
     eps = bsxfun(@plus,1,top./bottom);
     
-%     if isIonization
-%         for i=1:sq
-%             [omax posmax]=max(imag(-1./eps(:,i)));
-%             ind = bsxfun(@lt,omega,omega(posmax));
-%             eps(ind,i)=0;
-%         end
-%     end
+    if isIonization
+        for i=1:sq
+            [omax posmax]=max(imag(-1./eps(:,i)));
+            ind = bsxfun(@lt,omega,omega(posmax));
+            eps(ind,i)=0;
+        end
+    end
 end

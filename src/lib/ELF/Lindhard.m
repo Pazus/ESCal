@@ -24,8 +24,8 @@ function eps=Lindhard(q,omega,gamma,omega0)
     red1_d2 = real(d1) - real(d2);
     imd1_d2 = imag(d1) - imag(d2);
     
-    epsreal = repmat(ones(size(omega)),1,sq) + bsxfun(@times,red1_d2 ,chi^2./(4 * zzz));
+    epsreal = bsxfun(@plus,1,bsxfun(@times,red1_d2 ,chi^2./(4 * zzz)));
     epsimag = bsxfun(@times,imd1_d2 ,chi^2./(4 * zzz));
-    eps = epsreal + epsimag*1j;
+    eps = complex(epsreal,epsimag);
 
 end

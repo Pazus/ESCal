@@ -5,11 +5,13 @@ function eps=eps_LLX(q,omega,gamma,omega0,omega_gap)
     
     q=q(:)';
     omega = omega(:);
+    
+    ogdif = omega_gap^2 + gamma^2;
 
-    omega_minus_square = omega.^2 - repmat(omega_gap^2,sw,1) - repmat(gamma^2,sw,1) + 1j*2.0*omega*gamma;
+    omega_minus_square = complex(bsxfun(@minus,omega.^2,ogdif),2.0*omega*gamma);
     r = abs(omega_minus_square);
     theta = atan2(imag(omega_minus_square), real(omega_minus_square));
-    omega_minus = bsxfun(@times,sqrt(r),cos(theta/2.0)) + 1j*bsxfun(@times,sqrt(r),sin(theta/2.0));
+    omega_minus = complex(bsxfun(@times,sqrt(r),cos(theta/2.0)),bsxfun(@times,sqrt(r),sin(theta/2.0)));
     if bsxfun(@ge,real(omega_minus),0.0)
         eps = Lindhard(q,real(omega_minus),imag(omega_minus),omega0);
     else
@@ -49,6 +51,6 @@ function eps=eps_LLX(q,omega,gamma,omega0,omega_gap)
         t5 = bsxfun(@minus,1.0./QQ.^2,t1);
         eps_real = ones(size(eps_imag)) + bsxfun(@times,2.0 ./ (pi * v_f),t5+t2+t3-t4);
         
-        eps = eps_real + 1j*eps_imag;
+        eps = complex(eps_real,eps_imag);
     end
 end

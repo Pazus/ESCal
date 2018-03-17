@@ -9,6 +9,10 @@ osc.Ef = osc.Ef/h2ev;
 osc.eloss = osc.eloss/h2ev;
 osc.qtran = osc.qtran*a0;
 
+if isfield(osc,'u')
+    osc.u = osc.u/h2ev;
+end
+
 X=osc;
 
 end

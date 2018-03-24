@@ -9,14 +9,12 @@ function diimfp = ndiimfp_romberg(osc,E0)
 %%
 
 x_in = zeros(length(osc.eloss),1);
-% me = 9.10938356e-31;
-% hbar = 6.582119514e-16;
 w = osc.eloss;
 
 for i=1:length(w) %-1
     qmin = sqrt(2*E0/h2ev)-sqrt(2*(E0/h2ev-w(i)/h2ev));
     qmax = sqrt(2*E0/h2ev)+sqrt(2*(E0/h2ev-w(i)/h2ev));
-    sum = rombint(osc,qmin/a0,qmax/a0,15,w(i)); %Romberg intergration
+    sum = rombint(osc,qmin/a0,qmax/a0,12,w(i)); %Romberg intergration
 %     osc.qtran = qmin/a0:0.01:qmax/a0;
 %     osc.eloss = w(i);
 %     ELF = eps_sum(osc);
@@ -29,5 +27,4 @@ for i=1:length(w) %-1
 end
 diimfp = x_in ./ trapz(w,x_in);
 %plot(osc.eloss,diimfp)
-
 end

@@ -1,10 +1,17 @@
 function optfit
 
-l = load('hopgpal'); %load a file with Palik's data
-hopg = l.cgraphite;
+l = load('graphitepal'); %load a file with Palik's data
+graphite = l.C;
+%structure of the experimental data file:
+% 1 column - energy
+% 2 column - n
+% 3 column - k
 
-x=hopg(1:301,1);     %first column with energies
-y_exp=hopg(1:301,4); %fourth column with Im[-1/epsilon]
+eps1 = graphite(:,2).^2-graphite(:,3).^2;
+eps2 = 2*graphite(:,2).*graphite(:,3);
+
+x = graphite(:,1);
+y_exp = eps2./(eps1.^2+eps2.^2); %ELF
 
 Mat = XPSMaterial('C',1); %declare material properties
 

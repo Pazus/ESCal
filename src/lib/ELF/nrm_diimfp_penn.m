@@ -1,7 +1,7 @@
-function diimfp = nrm_diimfp_penn(w,osc,FermiEnergy,E0)
+function diimfp = nrm_diimfp_penn(osc,E0)
 %%
 %{
-   \brief Calculate the normalised DIIMFP (in eV^-1) 
+   Calculates the normalised DIIMFP (in eV^-1) 
    from data for the dielectric loss function, i.e. 
    the imaginary part of the reciprocal of the dielectric function.
    The Penn algoritm is used.
@@ -11,16 +11,23 @@ function diimfp = nrm_diimfp_penn(w,osc,FermiEnergy,E0)
    \param [in] E0 - the energy for which the diimfp is to be calculated
 %}
 %%
-    a0 = 0.529177 ;      %!< Bohr Radius in Angstroem 
-    x_in = zeros(length(w),1);
-    ELF = ELF_k(0.01,w,osc,FermiEnergy);
 
+    ELF = eps_sum(osc);
+
+    w = osc.eloss/h2ev;
+    
+%     loglog(w,ELF);
+%     xlabel('Energy loss, eV');
+%     ylabel('ELF');
+    
+    x_in = zeros(length(w),1);
+    
     for i = 1:length(w)
         if w(i)<0.05
             x_in(i) = 0;
         else
             hhw=w(i);
-            wpmax=2*(hhw-E0+sqrt(E0*(E0-hhw)));
+            wpmax=2*(hhw-E0/h2ev+sqrt(E0/h2ev*(E0/h2ev-hhw)));
             i1=0;
             k=2;
             quit=false;
@@ -45,7 +52,7 @@ function diimfp = nrm_diimfp_penn(w,osc,FermiEnergy,E0)
             end
         end
     end
-    diimfp = x_in ./ trapz(w,x_in);
+    diimfp = x_in ./ trapz(osc.eloss,x_in);
 end
 
 function x = ddmfpp_integrand(de,hwp)

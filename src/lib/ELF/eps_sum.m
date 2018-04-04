@@ -26,13 +26,11 @@ function ELF = eps_sum(osc)
 %}
 %%
 
-if strcmp(osc.model,'Drude') 
-    osc = convert2au(osc); %converts to atomic units, this is necessary for Drude model
-end
+osc = convert2au(osc); %converts to atomic units
 
 elec_density = sum(osc.A)/4/pi;
 Y = ['Electron density is ',num2str(elec_density),' (in a.u.)'];
-disp(Y);
+%disp(Y);
 
 w = osc.eloss;
 q = osc.qtran;
@@ -40,42 +38,77 @@ q = osc.qtran;
 ELF = zeros(numel(w),numel(q));
 
 if strcmp( osc.model,'Drude')
+    
     eps_re = osc.beps*ones(numel(w),numel(q));
     eps_im = zeros(numel(w),numel(q));
-    for j=1:length(osc.A)      
-        [epsDrud_re, epsDrud_im] = Drude(q,w,osc.Om(j),osc.G(j),osc.alpha,osc.Ef);
+    for j=1:length(osc.A)
+        
+        
+        if isfield(osc,'numion') && j>length(osc.A) - osc.numion
+            [epsDrud_re, epsDrud_im] = Drude(q,w,osc.Om(j),osc.G(j),osc.alpha,osc.Ef,true);
+        else
+            [epsDrud_re, epsDrud_im] = Drude(q,w,osc.Om(j),osc.G(j),osc.alpha,osc.Ef,false);
+        end
         eps_re = eps_re - osc.A(j)*epsDrud_re;
         eps_im(w>osc.egap,:) = eps_im(w>osc.egap,:) + osc.A(j)*epsDrud_im(w>osc.egap,:);
+        %plot(w,imag(-1./complex(osc.beps-osc.A(j)*epsDrud_re,osc.A(j)*epsDrud_im(w>osc.egap,:))));
+        %plot(w,imag(-1./complex(eps_re,eps_im)));
     end
     eps = complex(eps_re,eps_im);
     ELF = imag(-1./eps);
-else
-
-    for k=1:length(q)
-        for i=1:length(w)
-            eps1 = complex(0.0,0.0);
-            for j=1:length(osc.A)      
-                switch osc.model
-                    case 'Lindhard'
-                        w_q = osc.Om(j) + 0.5*osc.alpha * q(k)*q(k);
-                        epsLind = Lindhard(q(k),w(i),osc.G(j),w_q);
-                        eps1 = eps1 + osc.A(j)*(complex(1,0)/epsLind);
-                    case 'Mermin'
-                        w_q = osc.Om(j) + 0.5*osc.alpha * q(k)*q(k);
-                        epsMerm = Mermin(q(k),w(i),osc.G(j),w_q);
-                        eps1 = eps1 + osc.A(j)*(complex(1,0)/epsMerm);
-                    case 'Mermin_LL'
-                        w_q = osc.Om(j) + 0.5*osc.alpha * q(k)*q(k);
-                        epsMerm = Mermin_LL(q(k),w(i),osc.G(j),w_q,osc.u);
-                        eps1 = eps1 + osc.A(j)*(complex(1,0)/epsMerm);
-                    otherwise
-                        error('Choose the correct model name: Drude,Lindhard,Mermin,Mermin_LL');
-                end                
-            end 
-            eps = complex(1,0)/eps1;
-
-            ELF(i,k) = imag(-1/eps);
+elseif strcmp( osc.model,'DrudeLindhard')
+    
+    eps_re = ones(numel(w),numel(q));
+    eps_im = zeros(numel(w),numel(q));
+    for j=1:length(osc.A)
+        
+        
+        if isfield(osc,'numion') && j>length(osc.A) - osc.numion
+            [epsDrud_re, epsDrud_im] = DrudeLindhard(q,w,osc.Om(j),osc.G(j),osc.alpha,osc.Ef,true);
+        else
+            [epsDrud_re, epsDrud_im] = DrudeLindhard(q,w,osc.Om(j),osc.G(j),osc.alpha,osc.Ef,false);
         end
-    end 
+        eps_re = eps_re + osc.A(j)*epsDrud_re;
+        eps_im(w>osc.egap,:) = eps_im(w>osc.egap,:) + osc.A(j)*epsDrud_im(w>osc.egap,:);
+        %plot(w,imag(-1./complex(osc.beps-osc.A(j)*epsDrud_re,osc.A(j)*epsDrud_im(w>osc.egap,:))));
+        %plot(w,imag(-1./complex(eps_re,eps_im)));
+        %plot(w,eps_im);
+    end
+    %eps = complex(eps_re,eps_im);
+    %ELF = imag(-1./eps);
+    ELF = eps_im;
+elseif strcmp( osc.model,'Mermin')
+    eps1 = zeros(numel(w),numel(q));
+    for j=1:length(osc.A)
+        if isfield(osc,'numion') && j>length(osc.A) - osc.numion
+            epsMerm = Mermin(q,w,osc.G(j),osc.Om(j),true);
+            ind = bsxfun(@ne,epsMerm,0);
+            eps1(ind) = eps1(ind) + osc.A(j)*(complex(1,0)./epsMerm(ind));
+        else
+            epsMerm = Mermin(q,w,osc.G(j),osc.Om(j),false);
+            eps1 = eps1 + osc.A(j)*(complex(1,0)./epsMerm);
+        end
+%         eps_temp = osc.A(j)*(complex(1,0)./epsMerm); %to plot oscillators
+%         plot(w,imag(-1./(complex(1,0)./eps_temp)));
+    end
+    eps = complex(1,0)./eps1;
+    ELF = imag(-1./eps);
+elseif strcmp( osc.model,'Mermin_LL')
+    eps1 = zeros(numel(w),numel(q));
+    for j=1:length(osc.A)
+        if isfield(osc,'numion') && j>length(osc.A) - osc.numion
+            epsMerm = Mermin_LL(q,w,osc.G(j),osc.Om(j),osc.u,true);
+            ind = bsxfun(@ne,epsMerm,0);
+            eps1(ind) = eps1(ind) + osc.A(j)*(complex(1,0)./epsMerm(ind));
+        else
+            epsMerm = Mermin_LL(q,w,osc.G(j),osc.Om(j),osc.u,false);
+            eps1 = eps1 + osc.A(j)*(complex(1,0)./epsMerm);
+        end       
+    end
+    eps = complex(1,0)./eps1;
+    ELF = imag(-1./eps);
+else
+    error('Choose the correct model name: Drude,DrudeLindhard,Mermin,Mermin_LL');
+    
 end
 end

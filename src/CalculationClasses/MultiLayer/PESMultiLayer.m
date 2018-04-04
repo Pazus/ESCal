@@ -1,6 +1,5 @@
 classdef PESMultiLayer<BaseMultiLayer
     properties
-        %          z; %заменить все tau на z, вектор длиной в количество слоев
         theta                  = 0;
         phi                    = [];
         %         delta_max              = [];
@@ -20,19 +19,19 @@ classdef PESMultiLayer<BaseMultiLayer
             if nargin<3 || isempty(CalculationMethod);
                 CalculationMethod = {'NS'};
             elseif nargin<2 %|| isempty(MatShells)
-                %                 MatShells = % список элементов из Layers
+                %                 MatShells = % пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ Layers
                 error('Set material shells')
             end
             
             
-            % Проверка на одинаковость анодов
-            % Проверка в слоях на наличие анализируемой оболочки и материала
+            % пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+            % пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
             
             obj = obj@BaseMultiLayer(Layers, CalculationMethod);
             
             obj.dE = abs(obj.Layers(1).Material.DIIMFP_E(2) - obj.Layers(1).Material.DIIMFP_E(1));
             obj.energy_mesh_full=obj.Layers(1).Material.DIIMFP_E;
-            % Проверка на одинаковость E0  для всех слоёв
+            % пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ E0  пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
             %             for i_layer = 1:N_Layer
             %
             %             end
@@ -89,7 +88,7 @@ classdef PESMultiLayer<BaseMultiLayer
                             if any(strcmp(FindMatProp.XPS.Shells,MatShells.ShellName{i_mat}(i_shell)))
                                 obj.ShellsAnalyzed.ShellName{i_mat}(i_shell)=MatShells.ShellName{i_mat}(i_shell);
                             else
-                                error(['Неправильно заданы оболочки для ', MatShells.ShellName{i_mat} ])
+                                error(['пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ ', MatShells.ShellName{i_mat} ])
                             end
                         end
                     else
@@ -152,7 +151,7 @@ classdef PESMultiLayer<BaseMultiLayer
                                 case 'SA'
                                     obj.ObjectsOfLayers{i_layer} = SAXPS(obj.Layers(i_layer));
                                 otherwise
-                                    error('Введите корректное название метода: NS, SLA или SA.');
+                                    error('пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ: NS, SLA пїЅпїЅпїЅ SA.');
                             end
                         else
 %                             obj.Layers(find(obj.Layer_flag.(obj.MatExist{j_Mat}),true,'first')).Material.SetShell(obj.ShellExist.(obj.MatExist{j_Mat}){j_Shell});
@@ -170,7 +169,7 @@ classdef PESMultiLayer<BaseMultiLayer
                                 case 'SA'
                                     obj.ObjectsOfLayers{i_layer} = SATransmition(Layer_local);
                                 otherwise
-                                    error('Введите корректное название метода: NS, SLA или SA.');
+                                    error('пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ: NS, SLA пїЅпїЅпїЅ SA.');
                             end
                         end
                         
@@ -208,12 +207,12 @@ classdef PESMultiLayer<BaseMultiLayer
                         end
                         %                 Rlocal = obj.FullEnergyDistribution{i_layer}.R(:,:,:,:);
                         if strcmp(obj.CalculationMethod{i_layer},'SLA')
-                            % В SLA-решении уже содержатся частицы, прошедшие слой,
-                            % не испытав упругих рассеяний, а сами решения
-                            % представляют из себя дельта-функции, поэтому не нужно
-                            % интегрировать и не нужно добавлять Решение Ландау,
-                            % которое учитывает частицы, прошедшие слой, не испытав
-                            % упругих рассеяний
+                            % пїЅ SLA-пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ,
+                            % пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+                            % пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ-пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+                            % пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ,
+                            % пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ, пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+                            % пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                             wT = obj.FullEnergyDistribution{i_layer}.T;
                             Tw = obj.FullEnergyDistribution{i_layer}.T;
                             wR(:,:,:,:) = 1*R(:,:,:,:);
@@ -228,12 +227,13 @@ classdef PESMultiLayer<BaseMultiLayer
                             end
                         end
                         E_temp=abs(obj.energy_mesh_full/obj.ObjectsOfLayers{i_layer}.Material.E0-1);
-                        K_E = length(obj.energy_mesh_full)-find(min(E_temp)==E_temp,1); % Число элементов после E0
+                        K_E = length(obj.energy_mesh_full)-find(min(E_temp)==E_temp,1); % пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ E0
                         
                         if ~obj.calc_withoutR
                              Q_QR= obj.DoubleLayer(Q,     Qlocal,wR,[],K_E);
                              Q   = obj.DoubleLayer(Qlocal,Q_QR,  wT,[],K_E);
-                        else Q   = obj.DoubleLayer(Qlocal,Q,     wT,[],K_E);
+                        else
+                            Q   = obj.DoubleLayer(Qlocal,Q,     wT,[],K_E);
                         end
                         if i_layer<obj.N_Layer-1
                             Rlocal = obj.FullEnergyDistribution{i_layer}.R(:,:,:,:);
@@ -268,7 +268,7 @@ classdef PESMultiLayer<BaseMultiLayer
         end
 
         function CalculateEnergyDistribution(obj,theta,phi)
-            if nargin < 3; phi = 0; end; %??????
+            if nargin < 3; phi = 0; end %??????
             obj.CalculateEnergyDistribution_E0(theta,phi);
             convGauss (obj,obj.sigma_gauss);
             convLDS (obj,obj.sigma_LDS, obj.alpha_LDS);

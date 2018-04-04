@@ -82,10 +82,10 @@ classdef Material < CoreMaterial
             end
             
             E0_temp = obj.E0;
-            if isrow(E0_temp); E0_temp = E0_temp'; end;
+            if isrow(E0_temp); E0_temp = E0_temp'; end
             
-            if nargin < 2; mu = DECSData.x; end;
-            if ~isrow(mu); mu=mu'; end;
+            if nargin < 2; mu = DECSData.x; end
+            if ~isrow(mu); mu=mu'; end
             
             if max(mu)<=1 && min(mu)>=-1
                 mu = acos(mu);
@@ -115,7 +115,7 @@ classdef Material < CoreMaterial
                 
                 obj.IsManualDECS = false;
                 notify(obj,'DECSChanged');
-            end;
+            end
         end
         
         
@@ -284,7 +284,7 @@ classdef Material < CoreMaterial
             [x_w,y_w] = obj.CalculateDIIMFP_Werner;
             
             
-            % Продливаем сетку до нуля с аналогичным шагом
+            % пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
             if min(E_old)>0
                 dx = abs(EnergyMesh(end)-EnergyMesh(end-1));
                 EnergyMesh = [flipud((min(EnergyMesh):-dx:0)'); EnergyMesh(2:end)];
@@ -292,7 +292,7 @@ classdef Material < CoreMaterial
             
             prolongation_power = 2+SheildingCoefficient;
             
-            % Выполняем расчет для каждого значения E0
+            % пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ E0
             y = zeros(numel(EnergyMesh),numel(obj.E0));
             for i=1:numel(obj.E0)
                 temp_E0 = obj.E0(i);

@@ -134,7 +134,7 @@ classdef BaseCalculation < handle
                 
                 TempAngularDistribution = zeros(obj.N, numel(N_in), numel(phi));
                 
-                % Необходимо для того, чтобы получить следующую геометрию:
+                % пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ:
                 %          \   /
                 % theta0    \ /    theta
                 %        ____O____
@@ -252,7 +252,7 @@ classdef BaseCalculation < handle
             R_k = interp1(obj.mu_mesh,squeeze(obj.Rm(1,:,:,1)),mu_);
             
             R_e = trapz(mu_,-R_k*obj.CalculateEnergyConvolutions'*2*pi);
-        end;
+        end
         
         function CalculateOptimalM(obj,varargin)
             obj.M = optimal_M(obj.theta0);

@@ -41,4 +41,4 @@ Rml.CalculateEnergyDistribution(theta,phi);
 Rml.plotEnergyDistribution;
 
 xlabel('Kinetic energy, eV');
-ylabel('Intensity. Rel.un.');
+ylabel('Intensity, rel.un.');

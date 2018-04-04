@@ -154,6 +154,10 @@ classdef BaseMultiLayer < handle
     methods %(Access = protected)
         function CalculateEnergyDistribution_E0(obj,theta,phi)
             if nargin < 3; phi = 0; end;
+            if max(phi)>=360 || min(phi)<0
+                error('Elements of phi_mush must be in [0;360) range');
+            end
+            phi = phi+180;
             if ~obj.IsCalculated; error('Not calculated yet.'); end;
             
             cos_theta0 = cosd(obj.theta0);
@@ -163,7 +167,8 @@ classdef BaseMultiLayer < handle
                 for m=0:size(obj.FullEnergyDistribution{1}.R,4)-1;
                     k = 2*cosd(m*phi);
                     if m == 0; k=k/2; end
-                    r0 = interp2(obj.mu_mesh,obj.mu_mesh,obj.Fm(:,:,i,m+1),cos_theta0,cos_theta); %?????
+%                     r0 = interp2(obj.mu_mesh,obj.mu_mesh,obj.Fm(:,:,i,m+1),cos_theta0,cos_theta); % old
+                    r0 = interp2(obj.mu_mesh,obj.mu_mesh,obj.Fm(:,:,i,m+1),cos_theta,cos_theta0); % new?????
                     TempEnergyDistribution(i) = TempEnergyDistribution(i) + r0*k;
                 end
             end
@@ -265,11 +270,13 @@ classdef BaseMultiLayer < handle
                 
                 curLayerLm = zeros([sL(1:2) obj.N_in+1]);
                 curLayerLm(:,:,1) = diag(exp(-tau_tot./mu));
-                if isfinite(tau_tot)
+
+                if isfinite(tau_tot) 
                     for j=1:obj.N_in
                         curLayerLm(:,:,j+1) = curLayerLm(:,:,j).*diag((1-lambda)*tau_tot/j./mu);
                     end    
-                end
+                end    
+
                 Lm = reshape(reshape(curLayerLm,sL(1)^2,[])*EnDistr,sL(1),sL(2),[]);
                 
                 for m=0:M

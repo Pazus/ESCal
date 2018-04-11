@@ -1,4 +1,4 @@
-function [res]=rombint_surf(osc,a,b,decdigs,w_current,theta,E0,varargin)
+function [res]=rombint_surf(osc,a,b,decdigs,w_current,theta,E0,sign,varargin)
 %ROMBINT	 Numerical evaluation of an integral using the Romberg method.
 %
 %   Q = rombint('F',A,B) approximates the integral of F(X) from A to B to
@@ -20,8 +20,8 @@ function [res]=rombint_surf(osc,a,b,decdigs,w_current,theta,E0,varargin)
 %   E-mail: ma.kac@post.cz
 %   Date:   posted February 2001, updated June 2006.
 %
-if nargin<7, decdigs=10; end
-if nargin<6
+if nargin<8, decdigs=10; end
+if nargin<7
    warning ('Error in input format')
 else
    rom=zeros(2,decdigs);
@@ -33,7 +33,13 @@ else
    end
    %romall=feval(funfcn,osc,varargin{:});
    osc.eloss = w_current;
-   q_s = sqrt(osc.qtran*a0.^2 - ((osc.eloss + osc.qtran*a0.^2./2)./sqrt(2*E0)).^2).*cosd(theta) - ((osc.eloss + osc.qtran*a0.^2./2)./sqrt(2*E0)).*sind(theta);
+   if strcmp( sign,'plus')
+       q_s = sqrt((osc.qtran*a0).^2 - ( (osc.eloss/h2ev + (osc.qtran*a0).^2./2) ./ sqrt(2*E0/h2ev) ).^2).*cosd(theta) + ((osc.eloss/h2ev + (osc.qtran*a0).^2./2)./sqrt(2*E0/h2ev)).*sind(theta); 
+       %q_s = sqrt(osc.qtran.^2 - ( (osc.eloss + osc.qtran.^2./2) ./ sqrt(2*E0) ).^2).*cosd(theta) + ((osc.eloss + osc.qtran.^2./2)./sqrt(2*E0)).*sind(theta);
+   elseif strcmp( sign,'minus')
+       q_s = sqrt((osc.qtran*a0).^2 - ( (osc.eloss/h2ev + (osc.qtran*a0).^2./2) ./ sqrt(2*E0/h2ev) ).^2).*cosd(theta) - ((osc.eloss/h2ev + (osc.qtran*a0).^2./2)./sqrt(2*E0/h2ev)).*sind(theta);
+       %q_s = sqrt(osc.qtran.^2 - ( (osc.eloss + osc.qtran.^2./2) ./ sqrt(2*E0) ).^2).*cosd(theta) - ((osc.eloss + osc.qtran.^2./2)./sqrt(2*E0)).*sind(theta);
+   end
    romall = bsxfun(@times,eps_sum_surf(osc),abs(q_s))./((osc.qtran*a0).^3);
    romall(isnan(romall))=0;
    h=b-a;

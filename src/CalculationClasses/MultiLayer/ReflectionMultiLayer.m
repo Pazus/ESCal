@@ -1,6 +1,6 @@
 classdef ReflectionMultiLayer<BaseMultiLayer
     properties
-        %          z; %заменить все tau на z, вектор длиной в количество слоев
+        %          z; %пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ tau пїЅпїЅ z, пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
         theta                  = 0;
         phi                    = [];
         %         delta_max              = [];
@@ -19,7 +19,7 @@ classdef ReflectionMultiLayer<BaseMultiLayer
             
             obj.dE = abs(obj.Layers(1).Material.DIIMFP_E(2) - obj.Layers(1).Material.DIIMFP_E(1));
             obj.energy_mesh_full=obj.Layers(1).Material.DIIMFP_E;
-            % Проверка на одинаковость E0  для всех слоёв
+            % пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ E0  пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
             %             for i_layer = 1:N_Layer
             %
             %             end
@@ -41,7 +41,7 @@ classdef ReflectionMultiLayer<BaseMultiLayer
                     case 'SA'
                         obj.ObjectsOfLayers{i_layer} = SATransmition(obj.Layers(i_layer));
                     otherwise
-                        error('Введите корректное название метода: NS, SLA или SA.');
+                        error('пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ: NS, SLA пїЅпїЅпїЅ SA.');
                 end
             end
             obj.CalculateEachLayer;
@@ -58,12 +58,12 @@ classdef ReflectionMultiLayer<BaseMultiLayer
             for i_layer = (obj.N_Layer-1):-1:1
                 Rlocal = obj.FullEnergyDistribution{i_layer}.R(:,:,:,:);
                 if strcmp(obj.CalculationMethod{i_layer},'SLA')
-                    % В SLA-решении уже содержатся частицы, прошедшие слой
-                    % не испытав упругих рассеяний, а сами решения
-                    % представляют из себя дельта-функции, поэтому не нужно
-                    % интегрировать и не нужно добавлять Решение Ландау,
-                    % которое учитывает частицы, прошедшие слой не испытав
-                    % упругих рассеяний
+                    % пїЅ SLA-пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
+                    % пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+                    % пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ-пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+                    % пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ,
+                    % пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+                    % пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
                     wT = obj.FullEnergyDistribution{i_layer}.T;
                     Tw = obj.FullEnergyDistribution{i_layer}.T;
                 else
@@ -77,9 +77,9 @@ classdef ReflectionMultiLayer<BaseMultiLayer
                 end
                 
                 [~, K_E]=min(abs(obj.energy_mesh_full-obj.ObjectsOfLayers{1}.Material.E0));
-                K_E = length(obj.energy_mesh_full)-K_E;%find(obj.energy_mesh_full==obj.ObjectsOfLayers{1}.Material.E0); % Число элементов после E0
+                K_E = length(obj.energy_mesh_full)-K_E;%find(obj.energy_mesh_full==obj.ObjectsOfLayers{1}.Material.E0); % пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ E0
  
-%                 K_E = length(obj.energy_mesh_full)-find(obj.energy_mesh_full==obj.ObjectsOfLayers{1}.Material.E0); % Число элементов после E0
+%                 K_E = length(obj.energy_mesh_full)-find(obj.energy_mesh_full==obj.ObjectsOfLayers{1}.Material.E0); % пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ E0
                 R = obj.DoubleLayer(Rlocal,Tw,R,wT,K_E);
             end
             obj.Fm = R;
@@ -87,7 +87,7 @@ classdef ReflectionMultiLayer<BaseMultiLayer
         end
         
         function CalculateEnergyDistribution(obj,theta,phi)
-            if nargin < 3; phi = 0; end; %??????
+            if nargin < 3; phi = 0; end
             obj.CalculateEnergyDistribution_E0(theta,phi);
             convGauss (obj,obj.sigma_gauss);
             convLDS (obj,obj.sigma_LDS, obj.alpha_LDS);

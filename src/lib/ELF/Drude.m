@@ -32,8 +32,9 @@ function [eps_re, eps_im]=Drude(q,w_global,omega0,gamma,alpha,FermiEnergy, isIon
     eps_im = repmat(w_global*gamma,1,sq) ./ divisor;
     
     if isIonization
-        eps_re(w_global<w_at_q,:)=0;
-        eps_im(w_global<w_at_q,:)=0;
+        ind = bsxfun(@lt,w_global,w_at_q);
+        eps_re(ind)=0;
+        eps_im(ind)=0;
     end
     
 end

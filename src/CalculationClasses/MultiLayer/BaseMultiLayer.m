@@ -179,17 +179,17 @@ classdef BaseMultiLayer < handle
         end
         
         function CalculateAngularDistribution(obj,phi,theta0)
-            if nargin < 2; phi = []; end; %??????
-            if nargin < 3; theta0 = []; end;
+            if nargin < 2; phi = []; end
+            if nargin < 3; theta0 = []; end
             obj.CalculateAngularDistribution_E0(phi,theta0);
         end
-        
+       
         function CalculateAngularDistribution_E0(obj, phi, theta0)
             if nargin<2 || isempty(phi); phi = []; end
-            if nargin<3 || isempty(theta0); theta0 = obj.theta0; end;
+            if nargin<3 || isempty(theta0); theta0 = obj.theta0; end
             
             if theta0 > obj.theta0; error('theta0 has to be not more then one that was used for calculations'); end;
-            if ~obj.IsCalculated; error('Not calculated yet.'); end;
+            if ~obj.IsCalculated; error('Not calculated yet.'); end
             
             cos_theta0 = cosd(theta0);
             [~, ind_E0] = min(abs(obj.energy_mesh_full-obj.Layers(1).Material.E0));  
@@ -317,9 +317,9 @@ classdef BaseMultiLayer < handle
             if size(obj.energy_mesh_full)~=size(obj.Layers(1).Material.DIIMFP_E)
                 p = 1;
             end
-            if ~p
-                p = (max(abs(obj.energy_mesh_full-obj.Layers(1).Material.DIIMFP_E))~=0);
-            end
+%             if ~p
+%                 p = (max(abs(obj.energy_mesh_full-obj.Layers(1).Material.DIIMFP_E))~=0);
+%             end
             if p 
                 for i_layer = 1:obj.N_Layer
                     
@@ -349,7 +349,7 @@ classdef BaseMultiLayer < handle
                 obj.ObjectsOfLayers{i_layer}.Calculate;
 
                 time=toc;
-                disp(['Calculating time of the layer ', num2str(i_layer), ': ', num2str(time),' sec.']);                    
+                disp(['Calculating time of layer ', num2str(i_layer), ': ', num2str(time),' sec.']);                    
             end
             
         end

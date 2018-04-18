@@ -55,7 +55,8 @@ if strcmp( osc.model,'Drude')
         %plot(w,imag(-1./complex(eps_re,eps_im)));
     end
     eps = complex(eps_re,eps_im);
-    ELF = imag(-1./eps);
+    %ELF = imag(-1./eps);
+    ELF = imag(bsxfun(@rdivide,(eps-ones(size(eps))).^2,bsxfun(@times,eps,eps+ones(size(eps)))));
 elseif strcmp( osc.model,'DrudeLindhard')
     
     eps_re = ones(numel(w),numel(q));
@@ -74,10 +75,8 @@ elseif strcmp( osc.model,'DrudeLindhard')
         %plot(w,imag(-1./complex(eps_re,eps_im)));
         %plot(w,eps_im);
     end
-    eps = complex(eps_re,eps_im);
     %ELF = imag(-1./eps);
-    %ELF = eps_im;
-    ELF = imag(bsxfun(@rdivide,(eps-ones(size(eps))).^2,bsxfun(@times,eps,eps+ones(size(eps)))));
+    ELF = eps_im;
 elseif strcmp( osc.model,'Mermin')
     eps1 = zeros(numel(w),numel(q));
     for j=1:length(osc.A)

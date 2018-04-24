@@ -1,10 +1,11 @@
-function diimfp = ndiimfp_romberg_surf(osc,E0,theta,sign)
+function diimfp = ndsep_Tung(osc,E0,theta,sign)
 %%
 %{
    Calculates the normalised NDSEP (in eV^-1) 
-   from data for the dielectric loss function, i.e. 
-   the imaginary part of the reciprocal of the dielectric function.
-   The Romberg algoritm is used.
+   for a given emission angle theta
+   according to Tung algorithm
+   C.J. Tung et al. / Phys. Rev. B 49 (1994) 16684.
+   The Romberg algoritm for the integration is used.
 %}
 %%
 
@@ -21,6 +22,6 @@ for i=1:length(w)
         disp(YY);
     end
 end
-diimfp = x_in; % ./ trapz(w,x_in);
+diimfp = x_in ./ trapz(w,x_in);
 %plot(osc.eloss,diimfp)
 end

@@ -11,8 +11,8 @@ else
    end
    
    osc.eloss = w_current;
-   theta = 0:pi/8:pi/2;
-   phi = 0:2*pi/10:2*pi;
+   theta = 0:pi/4:pi/2;
+   phi = 0:2*pi/5:2*pi;
    
    switch(term)
        case 1
@@ -74,8 +74,8 @@ else
 
            romall = bsxfun(@times,Im,bsxfun(@rdivide,top,bottom));
        case 4
-Im = zeros(length(theta),length(osc.qtran));
-           qz = bsxfun(@times,osc.qtran.*a0,cos(theta)');
+           Im = zeros(length(theta),length(osc.qtran));
+           
            Q = bsxfun(@times,osc.qtran.*a0,sin(theta)');
            v_per = cosd(alpha).*sqrt(2*E0/h2ev);
            r = bsxfun(@rdivide,depth/a0,cosd(alpha));
@@ -85,7 +85,7 @@ Im = zeros(length(theta),length(osc.qtran));
            
            top = bsxfun(@times,qsintheta,exp(bsxfun(@times,(-1)*abs(r),Qcosalpha)));
            
-           qvsintheta = bsxfun(@times,(osc.qtran*a0).*sqrt(2*E0/h2ev),sin(theta)');
+           qvsintheta = bsxfun(@times,(osc.qtran*a0).*sqrt(2*E0/h2ev),sin(theta)'); %q*v*sin(theta)
            exdim = repmat(qvsintheta, 1, 1, length(phi)); %add extra dimension over phi
            B = bsxfun(@times,exdim,reshape(cos(phi),1,1,[]));
            

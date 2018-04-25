@@ -80,7 +80,7 @@ elseif strcmp( osc.model,'DrudeLindhard')
     %ELF = imag(-1./eps);
     ELF = eps_im;
 elseif strcmp( osc.model,'Mermin')
-    eps1 = zeros(numel(w),numel(q));
+    eps1 = zeros(size(q));
     for j=1:length(osc.A)
         if isfield(osc,'numion') && j>length(osc.A) - osc.numion
             epsMerm = Mermin(q,w,osc.G(j),osc.Om(j),true);
@@ -94,7 +94,11 @@ elseif strcmp( osc.model,'Mermin')
 %         plot(w,imag(-1./(complex(1,0)./eps_temp)));
     end
     eps = complex(1,0)./eps1;
-    ELF = imag(-1./eps);
+    if strcmp(interface,'bulk')
+        ELF = imag(-1./eps);
+    elseif strcmp(interface,'surface')
+        ELF = imag(-1./(eps+1));
+    end
 elseif strcmp( osc.model,'Mermin_LL')
     eps1 = zeros(numel(w),numel(q));
     for j=1:length(osc.A)

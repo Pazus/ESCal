@@ -4,9 +4,9 @@ function eps=Mermin(q, omega, gamma,omega0, isIonization)
         isIonization=false;
     end
     
-    sq = numel(q);
-    
-    q=q(:)';
+%     sq = numel(q);
+%     
+%     q=q(:)';
     omega = omega(:);
     
     om_at_q = omega0;

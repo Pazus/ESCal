@@ -1,4 +1,4 @@
-function [diimfp,dsep] = ndiimfp_Li(osc,E0,depth,alpha,decdigs,varargin)
+function diimfp = ndiimfp_Li(osc,E0,depth,alpha,interface,decdigs,varargin)
 %%
 %{
    Calculates the normalised NDIIMFP (in eV^-1*A^-1)
@@ -8,8 +8,8 @@ function [diimfp,dsep] = ndiimfp_Li(osc,E0,depth,alpha,decdigs,varargin)
    Y.C. Li et al. / Surface Science 589 (2005) 67-76.
 %}
 
-if nargin<5, decdigs=10; end
-if nargin<4
+if nargin<6, decdigs=10; end
+if nargin<5
     warning ('Error in input format')
 else
     
@@ -54,7 +54,6 @@ else
         osc.qtran = q/a0;
         ELF=eps_sum_test(osc,'bulk');
         res = ELF./q;
-        res(isnan(res))=0;
         for i=1:length(osc.eloss)
             x_in_clear_b(i) = 1/pi/(E0/h2ev)*stepfunction(-depth) * trapz(q(i,:),res(i,:))/h2ev/a0;
         end
@@ -117,18 +116,17 @@ else
     plot(osc.eloss,x_in_clear_b + x_in_b + x_in)
     legend('Reduced bulk','Surface','DIIMFP');
     
-    Y = ['siimfp = ',num2str(trapz(osc.eloss,x_in))];
-    disp(Y);
-    Y = ['biimfp = ',num2str(trapz(osc.eloss,x_in_b + x_in_clear_b))];
-    disp(Y);
+    Y = ['si'];
     
-    if depth==0
-        diimfp = x_in_clear_b./0.5./trapz(osc.eloss,x_in_clear_b./0.5);
-    else
-        diimfp = x_in_clear_b./trapz(osc.eloss,x_in_clear_b);
+    if strcmp(interface,'bulk')
+        if depth==0
+            diimfp = x_in_clear_b./0.5./trapz(osc.eloss,x_in_clear_b);
+        else
+            diimfp = x_in_clear_b./trapz(osc.eloss,x_in_clear_b);
+        end
+    elseif strcmp(interface,'surface')
+        diimfp = x_in./trapz(osc.eloss,x_in);
     end
-    dsep = x_in./trapz(osc.eloss,x_in);
-
 end
 
 %% Heaviside function

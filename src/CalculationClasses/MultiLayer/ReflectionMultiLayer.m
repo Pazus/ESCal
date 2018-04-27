@@ -58,12 +58,6 @@ classdef ReflectionMultiLayer<BaseMultiLayer
             for i_layer = (obj.N_Layer-1):-1:1
                 Rlocal = obj.FullEnergyDistribution{i_layer}.R(:,:,:,:);
                 if strcmp(obj.CalculationMethod{i_layer},'SLA')
-                    % � SLA-������� ��� ���������� �������, ��������� ����
-                    % �� ������� ������� ���������, � ���� �������
-                    % ������������ �� ���� ������-�������, ������� �� �����
-                    % ������������� � �� ����� ��������� ������� ������,
-                    % ������� ��������� �������, ��������� ���� �� �������
-                    % ������� ���������
                     wT = obj.FullEnergyDistribution{i_layer}.T;
                     Tw = obj.FullEnergyDistribution{i_layer}.T;
                 else

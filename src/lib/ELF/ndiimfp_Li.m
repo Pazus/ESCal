@@ -128,6 +128,7 @@ else
         diimfp = x_in_clear_b./trapz(osc.eloss,x_in_clear_b);
     end
     dsep = x_in./trapz(osc.eloss,x_in);
+%     dsep = (x_in_clear_b + x_in_b + x_in)./trapz(osc.eloss,x_in_clear_b + x_in_b + x_in);
 
 end
 

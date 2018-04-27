@@ -21,6 +21,7 @@ classdef BaseMultiLayer < handle
         dE;
         N;
         M;
+        vacuum;
 %        Calculate_only_theta0_theta=false;
     end
     
@@ -262,9 +263,9 @@ classdef BaseMultiLayer < handle
                 calcT = isprop(obj.ObjectsOfLayers{i_layer}, 'Tm');
                 calcQ = isprop(obj.ObjectsOfLayers{i_layer}, 'Qm');
                 
-                if calcR; R = zeros(sL); end;
-                if calcT; T = zeros(sL); end;
-                if calcQ; Q = zeros(sL); end;
+                if calcR; R = zeros(sL); end
+                if calcT; T = zeros(sL); end
+                if calcQ; Q = zeros(sL); end
                 
                 curLayer = obj.ObjectsOfLayers{i_layer};
                 
@@ -289,9 +290,9 @@ classdef BaseMultiLayer < handle
                 end
                 
                 FED{i_layer}.L = L;
-                if calcR; FED{i_layer}.R = R; end;
-                if calcT; FED{i_layer}.T = T; end;
-                if calcQ; FED{i_layer}.Q = Q; end;
+                if calcR; FED{i_layer}.R = R; end
+                if calcT; FED{i_layer}.T = T; end
+                if calcQ; FED{i_layer}.Q = Q; end
                 %                 FullEnergyDistribution.Qdown = FullEnergyDistribution.Qup;
                 time=toc;
                 disp(['Calculating time (FED) of the layer ', num2str(i_layer), ': ', num2str(time),' sec.']);
@@ -325,7 +326,8 @@ classdef BaseMultiLayer < handle
                     
                     y_in = obj.Layers(i_layer).Material.DIIMFP;
                     x_in = obj.Layers(i_layer).Material.DIIMFP_E;
-                    y_new=interp1(x_in, y_in, obj.energy_mesh_full);
+                    [x_in, index] = unique (x_in); 
+                    y_new = interp1 (x_in, y_in (index), obj.energy_mesh_full);
                     y_new(isnan(y_new))=0;
 
                     obj.Layers(i_layer).Material.SetManualDIIMFP(obj.energy_mesh_full',y_new');

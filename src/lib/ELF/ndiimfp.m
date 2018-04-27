@@ -1,0 +1,56 @@
+function diimfp = ndiimfp(osc,E0,decdigs,varargin)
+%%
+%{
+   Calculates the normalised DIIMFP
+   for a given energy.
+%}
+
+if nargin<3, decdigs=10; end
+if nargin<2
+    warning ('Error in input format')
+else
+    
+    qmin = sqrt(2*E0/h2ev)-sqrt(2*(E0/h2ev-osc.eloss/h2ev));
+    qmax = sqrt(2*E0/h2ev)+sqrt(2*(E0/h2ev-osc.eloss/h2ev));
+    
+    q = zeros(length(osc.eloss),2^(decdigs-1)+1);
+    x_in = zeros(size(osc.eloss));
+    
+    for i = 1:2^(decdigs-1)+1
+        q(:,i) = qmin + (i-1)*(qmax-qmin)/2.^(decdigs-1);
+    end
+    
+    osc.qtran = q/a0;
+    ELF=eps_sum_test(osc,'bulk');
+
+    res = ELF./q;
+    res(isnan(res))=0;
+    
+    for i=1:length(osc.eloss)
+        x_in(i) = 1/pi/(E0/h2ev) * trapz(q(i,:),res(i,:))/h2ev;
+    end
+
+    %% Plot
+    figure;
+    xlim([0 100])
+    hold on
+    box on
+    plot(osc.eloss,x_in)
+   
+    Y = ['biimfp = ',num2str(trapz(osc.eloss,x_in))];
+    disp(Y);
+
+    diimfp = x_in./trapz(osc.eloss,x_in);
+end
+
+end
+
+
+
+
+
+
+
+
+
+

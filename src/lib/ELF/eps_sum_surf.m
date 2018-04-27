@@ -39,24 +39,21 @@ ELF = zeros(numel(w),numel(q));
 
 if strcmp( osc.model,'Drude')
     
-    eps_re = osc.beps*ones(numel(w),numel(q));
-    eps_im = zeros(numel(w),numel(q));
+    eps_re = osc.beps*ones(size(q));
+    eps_im = zeros(size(q));
     for j=1:length(osc.A)
-        
-        
+             
         if isfield(osc,'numion') && j>length(osc.A) - osc.numion
             [epsDrud_re, epsDrud_im] = Drude(q,w,osc.Om(j),osc.G(j),osc.alpha,osc.Ef,true);
         else
-            [epsDrud_re, epsDrud_im] = Drude(q,w,osc.Om(j),osc.G(j),osc.alpha,osc.Ef,false);
+            [epsDrud_re, epsDrud_im] = Drude_all(q,w,osc.Om(j),osc.G(j),osc.alpha,osc.Ef,false);
         end
         eps_re = eps_re - osc.A(j)*epsDrud_re;
-        eps_im(w>osc.egap,:) = eps_im(w>osc.egap,:) + osc.A(j)*epsDrud_im(w>osc.egap,:);
-        %plot(w,imag(-1./complex(osc.beps-osc.A(j)*epsDrud_re,osc.A(j)*epsDrud_im(w>osc.egap,:))));
-        %plot(w,imag(-1./complex(eps_re,eps_im)));
+        ind = bsxfun(@gt,w,osc.egap);
+        eps_im(ind,:) = eps_im(ind,:) + osc.A(j)*epsDrud_im(ind,:);
     end
     eps = complex(eps_re,eps_im);
-    %ELF = imag(-1./eps);
-    ELF = imag(bsxfun(@rdivide,(eps-ones(size(eps))).^2,bsxfun(@times,eps,eps+ones(size(eps)))));
+    ELF = imag(bsxfun(@rdivide,(eps-1).^2,bsxfun(@times,eps,eps+1)));
 elseif strcmp( osc.model,'DrudeLindhard')
     
     eps_re = ones(numel(w),numel(q));

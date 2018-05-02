@@ -75,7 +75,7 @@ elseif strcmp( osc.model,'DrudeLindhard')
     %ELF = imag(-1./eps);
     ELF = eps_im;
 elseif strcmp( osc.model,'Mermin')
-    eps1 = zeros(numel(w),numel(q));
+    eps1 = zeros(size(q));
     for j=1:length(osc.A)
         if isfield(osc,'numion') && j>length(osc.A) - osc.numion
             epsMerm = Mermin(q,w,osc.G(j),osc.Om(j),true);
@@ -88,12 +88,8 @@ elseif strcmp( osc.model,'Mermin')
 %         eps_temp = osc.A(j)*(complex(1,0)./epsMerm); %to plot oscillators
 %         plot(w,imag(-1./(complex(1,0)./eps_temp)));
     end
-     eps = complex(1,0)./eps1;
-    %ELF = imag(-1./eps);
-%     temp = bsxfun(@rdivide,(eps-ones(size(eps))).^2,bsxfun(@times,eps,eps+ones(size(eps))));
-%     temp = bsxfun(@rdivide,(complex(1,0)./eps-ones(size(eps))).^2,bsxfun(@times,complex(1,0)./eps,complex(1,0)./eps+ones(size(eps))));
-    temp = bsxfun(@rdivide,(complex(1,0)./(eps-ones(size(eps1)))).^2,bsxfun(@times,complex(1,0)./eps1,complex(1,0)./(eps1+ones(size(eps1)))));
-    ELF = imag(complex(1,0)./temp);
+    eps = complex(1,0)./eps1;
+    ELF = imag(bsxfun(@rdivide,(eps-1).^2,bsxfun(@times,eps,eps+1)));
 elseif strcmp( osc.model,'Mermin_LL')
     eps1 = zeros(numel(w),numel(q));
     for j=1:length(osc.A)

@@ -4,15 +4,12 @@ classdef BaseMultiLayer < handle
         Layers@Layer; % array of @Layer
         N_in=0;
         theta0                          = 0;
-        N_Layer;% ?????????? ?????, ?????????? ???? ????? x_in ??? z
-        %         mesh_E;
+        N_Layer;
         CalculationMethod;
         ObjectsOfLayers;
         FullEnergyDistribution;
         EnergyDistribution;
         AngularDistribution
-        
-%         deltaE_elastic_peak;
         energy_mesh_full;
         mu_mesh;
         sigma_gauss;
@@ -21,8 +18,6 @@ classdef BaseMultiLayer < handle
         dE;
         N;
         M;
-        vacuum;
-%        Calculate_only_theta0_theta=false;
     end
     
     properties (Hidden = true)
@@ -31,7 +26,7 @@ classdef BaseMultiLayer < handle
     
     properties (SetAccess = protected)
         
-        IsCalculated                    = false;                        % Object is calculated flag. If you change any parameter flag will be switched to false
+        IsCalculated = false;  % Object is calculated flag. If you change any parameter flag will be switched to false
     end
     
     methods
@@ -48,18 +43,9 @@ classdef BaseMultiLayer < handle
             if length(obj.CalculationMethod)~=obj.N_Layer
                 error('Number of methods and number of layers must be the same.')
             end
-            % ???????? ?? ??????? ?????????? ???????
             for i_layer=1:obj.N_Layer
                if isempty(obj.Layers(i_layer).Material.DIIMFP); error(['DIIMFP for ', num2str(i_layer), ' layer is not set.']); end 
             end
-            %             addlistener(obj,'N_in','PostSet',@obj.Change_N_in);
-            %             addlistener(obj,'theta0','PostSet',@obj.Change_theta0);
-            %             addlistener(obj,'energy_mesh_full','PostSet',@obj.Setup_energy_mesh_full);
-            
-            
-            %             addlistener(obj,'sigma_gauss','PostSet',@obj.ClearResults);
-            %             addlistener(obj,'sigma_LDS','PostSet',@obj.ClearResults);
-            %             addlistener(obj,'alpha_LDS','PostSet',@obj.ClearResults);
         end
         
         
@@ -80,10 +66,6 @@ classdef BaseMultiLayer < handle
             plot(x_plot,y_plot);
             xlabel('{\theta}, eV');
         end
-        
-        %         function conv_angle(obj)
-        %
-        %         end
         
         function convGauss (obj,sigma_gauss)
             if  ~isempty(sigma_gauss)
@@ -154,21 +136,20 @@ classdef BaseMultiLayer < handle
     
     methods %(Access = protected)
         function CalculateEnergyDistribution_E0(obj,theta,phi)
-            if nargin < 3; phi = 0; end;
+            if nargin < 3; phi = 0; end
             if max(phi)>=360 || min(phi)<0
                 error('Elements of phi_mush must be in [0;360) range');
             end
             phi = phi+180;
-            if ~obj.IsCalculated; error('Not calculated yet.'); end;
+            if ~obj.IsCalculated; error('Not calculated yet.'); end
             
             cos_theta0 = cosd(obj.theta0);
             cos_theta = cosd(theta);
             TempEnergyDistribution = zeros(1,size(obj.FullEnergyDistribution{1}.R,3));
-            for i=1:size(obj.FullEnergyDistribution{1}.R,3);
-                for m=0:size(obj.FullEnergyDistribution{1}.R,4)-1;
+            for i=1:size(obj.FullEnergyDistribution{1}.R,3)
+                for m=0:size(obj.FullEnergyDistribution{1}.R,4)-1
                     k = 2*cosd(m*phi);
                     if m == 0; k=k/2; end
-%                     r0 = interp2(obj.mu_mesh,obj.mu_mesh,obj.Fm(:,:,i,m+1),cos_theta0,cos_theta); % old
                     r0 = interp2(obj.mu_mesh,obj.mu_mesh,obj.Fm(:,:,i,m+1),cos_theta,cos_theta0); % new?????
                     TempEnergyDistribution(i) = TempEnergyDistribution(i) + r0*k;
                 end
@@ -176,7 +157,6 @@ classdef BaseMultiLayer < handle
             y_temp = interp1(obj.ObjectsOfLayers{1}.energy_mesh,TempEnergyDistribution,obj.energy_mesh_full);
             y_temp(isnan(y_temp)) = 0;
             obj.EnergyDistribution = y_temp;
-%             obj.EnergyDistribution =TempEnergyDistribution;
         end
         
         function CalculateAngularDistribution(obj,phi,theta0)
@@ -203,12 +183,11 @@ classdef BaseMultiLayer < handle
                 
                 TempAngularDistribution = zeros(obj.ObjectsOfLayers{1}.N, numel(phi));
                 
-                % ?????????? ??? ????, ????? ???????? ????????? ?????????:
                 %          \   /
                 % theta0    \ /    theta
                 %        ____O____
                 
-                phi = phi+180; %???
+                phi = phi+180; 
                 
                 for m=0:obj.ObjectsOfLayers{1}.M
                     k = 2*cosd(m*phi);
@@ -232,7 +211,6 @@ classdef BaseMultiLayer < handle
             obj.AngularDistribution = TempAngularDistribution*obj.dE;
         end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %         function FullEnergyDistribution = RecalculateToEnergyDistribution(obj)
         function RecalculateToEnergyDistribution(obj)
             FED = cell(1,numel(obj.N_Layer));
             for i_layer = 1:obj.N_Layer
@@ -244,14 +222,11 @@ classdef BaseMultiLayer < handle
                 FED{i_layer}.T = zeros(N, N, size(obj.ObjectsOfLayers{i_layer}.energy_mesh,1),M+1);
                 if isprop(obj.ObjectsOfLayers{i_layer}, 'Qm')
                     FED{i_layer}.Q = zeros(N, N, size(obj.ObjectsOfLayers{i_layer}.energy_mesh,1),M+1);
-                    %                     FullEnergyDistribution.Qdown = zeros(N, N, size(EnDistr,1),M+1);
                 end
                 
                 
                 EnDistr = obj.ObjectsOfLayers{i_layer}.CalculateEnergyConvolutions';
-                
-%                 EnDistr(1,end) = 0; %!!!!!!!!!!!!!!!!!!!!!!!!!!
-                
+                                
                 tau_tot = obj.ObjectsOfLayers{i_layer}.Layer.tau_tot;
                 mu = obj.mu_mesh;
                 lambda = obj.ObjectsOfLayers{i_layer}.Layer.Material.lambda;
@@ -293,26 +268,13 @@ classdef BaseMultiLayer < handle
                 if calcR; FED{i_layer}.R = R; end
                 if calcT; FED{i_layer}.T = T; end
                 if calcQ; FED{i_layer}.Q = Q; end
-                %                 FullEnergyDistribution.Qdown = FullEnergyDistribution.Qup;
                 time=toc;
                 disp(['Calculating time (FED) of the layer ', num2str(i_layer), ': ', num2str(time),' sec.']);
             end
             
             obj.FullEnergyDistribution = FED;
         end
-        
-%         function Change_N_in(obj, varargin)
-%             for i_layer = 1:obj.N_Layer
-%                 obj.ObjectsOfLayers{i_layer}.N_in = obj.N_in;
-%             end
-%         end
-        
-%         function Change_theta0(obj, varargin)
-%             for i_layer = 1:obj.N_Layer
-%                 obj.ObjectsOfLayers{i_layer}.theta0 = obj.theta0;
-%             end
-%         end
-        
+
         function Setup_energy_mesh_full(obj, varargin)
             p = 0;
             if size(obj.energy_mesh_full)~=size(obj.Layers(1).Material.DIIMFP_E)
@@ -342,11 +304,9 @@ classdef BaseMultiLayer < handle
             for i_layer = 1:obj.N_Layer
                 obj.ObjectsOfLayers{i_layer}.theta0 = obj.theta0;
                 obj.ObjectsOfLayers{i_layer}.N_in = obj.N_in;
-                % {
-                if ~isempty(obj.N) % && strcmp(obj.CalculationMethod(i_layer), 'NS')
+                if ~isempty(obj.N) 
                     obj.ObjectsOfLayers{i_layer}.N = obj.N;
-                end
-                %}                
+                end             
                 tic;
                 obj.ObjectsOfLayers{i_layer}.Calculate;
 
@@ -356,7 +316,7 @@ classdef BaseMultiLayer < handle
             
         end
         
-    end;
+    end
     
     methods (Abstract = true)
         Calculate(obj);

@@ -27,10 +27,11 @@ else
     res(isnan(res))=0;
     
     for i=1:length(osc.eloss)
-        x_in(i) = 1/pi/(E0/h2ev) * trapz(q(i,:),res(i,:))/h2ev;
+        x_in(i) = 1/pi/(E0/h2ev) * trapz(q(i,:),res(i,:)) *(1/h2ev/a0);
     end
 
     %% Plot
+    %{
     figure;
     xlim([0 100])
     hold on
@@ -39,8 +40,9 @@ else
    
     Y = ['biimfp = ',num2str(trapz(osc.eloss,x_in))];
     disp(Y);
+    %}
 
-    diimfp = x_in./trapz(osc.eloss,x_in);
+    diimfp = x_in; %./trapz(osc.eloss,x_in);
 end
 
 end

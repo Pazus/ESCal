@@ -1,9 +1,10 @@
-function ELF = eps_sum_test(osc,interface)
+function ELF = eps_sum_allwq(osc,interface)
 
 %%
 %{
    Calculates the imaginary part of the inverse dielectric function Im[-1/eps]
-   for the energy w and momentum transfer q on the basis of four ELF models.
+   for the energy array w and momentum transfer array q on the basis of four ELF models
+   for the consequent integration over all momentum transfers.
    Input parameter:
    osc is the field of oscilattors data including the follows:
          1. osc.A      - amplitudes
@@ -28,10 +29,6 @@ function ELF = eps_sum_test(osc,interface)
 
 osc = convert2au(osc); %converts to atomic units
 
-elec_density = sum(osc.A)/4/pi;
-Y = ['Electron density is ',num2str(elec_density),' (in a.u.)'];
-%disp(Y);
-
 w = osc.eloss;
 q = osc.qtran;
 
@@ -40,17 +37,10 @@ if strcmp( osc.model,'Drude')
     eps_re = osc.beps*ones(size(q));
     eps_im = zeros(size(q));
     for j=1:length(osc.A)
-             
-        if isfield(osc,'numion') && j>length(osc.A) - osc.numion
-            [epsDrud_re, epsDrud_im] = Drude(q,w,osc.Om(j),osc.G(j),osc.alpha,osc.Ef,true);
-        else
-            [epsDrud_re, epsDrud_im] = Drude_all(q,w,osc.Om(j),osc.G(j),osc.alpha,osc.Ef,false);
-        end
+        [epsDrud_re, epsDrud_im] = Drude(q,w,osc.Om(j),osc.G(j),osc.alpha,osc.Ef);
         eps_re = eps_re - osc.A(j)*epsDrud_re;
         ind = bsxfun(@gt,w,osc.egap);
         eps_im(ind,:) = eps_im(ind,:) + osc.A(j)*epsDrud_im(ind,:);
-        %plot(w,imag(-1./complex(osc.beps-osc.A(j)*epsDrud_re,osc.A(j)*epsDrud_im(w>osc.egap,:))));
-        %plot(w,imag(-1./complex(eps_re,eps_im)));
     end
     eps = complex(eps_re,eps_im);
     if strcmp(interface,'bulk')
@@ -60,38 +50,20 @@ if strcmp( osc.model,'Drude')
     end
 elseif strcmp( osc.model,'DrudeLindhard')
     
-    eps_re = ones(numel(w),numel(q));
-    eps_im = zeros(numel(w),numel(q));
+    eps_re = zeros(size(q));
+    eps_im = zeros(size(q));
     for j=1:length(osc.A)
-        
-        
-        if isfield(osc,'numion') && j>length(osc.A) - osc.numion
-            [epsDrud_re, epsDrud_im] = DrudeLindhard(q,w,osc.Om(j),osc.G(j),osc.alpha,osc.Ef,true);
-        else
-            [epsDrud_re, epsDrud_im] = DrudeLindhard(q,w,osc.Om(j),osc.G(j),osc.alpha,osc.Ef,false);
-        end
+        [epsDrud_re, epsDrud_im] = DrudeLindhard(q,w,osc.Om(j),osc.G(j),osc.alpha,osc.Ef);
         eps_re = eps_re + osc.A(j)*epsDrud_re;
-        eps_im(w>osc.egap,:) = eps_im(w>osc.egap,:) + osc.A(j)*epsDrud_im(w>osc.egap,:);
-        %plot(w,imag(-1./complex(osc.beps-osc.A(j)*epsDrud_re,osc.A(j)*epsDrud_im(w>osc.egap,:))));
-        %plot(w,imag(-1./complex(eps_re,eps_im)));
-        %plot(w,eps_im);
+        ind = bsxfun(@gt,w,osc.egap);
+        eps_im(ind,:) = eps_im(ind,:) + osc.A(j)*epsDrud_im(ind,:);
     end
-    %eps = complex(eps_re,eps_im);
-    %ELF = imag(-1./eps);
     ELF = eps_im;
 elseif strcmp( osc.model,'Mermin')
     eps1 = zeros(size(q));
     for j=1:length(osc.A)
-        if isfield(osc,'numion') && j>length(osc.A) - osc.numion
-            epsMerm = Mermin(q,w,osc.G(j),osc.Om(j),true);
-            ind = bsxfun(@ne,epsMerm,0);
-            eps1(ind) = eps1(ind) + osc.A(j)*(complex(1,0)./epsMerm(ind));
-        else
-            epsMerm = Mermin(q,w,osc.G(j),osc.Om(j),false);
-            eps1 = eps1 + osc.A(j)*(complex(1,0)./epsMerm);
-        end
-%         eps_temp = osc.A(j)*(complex(1,0)./epsMerm); %to plot oscillators
-%         plot(w,imag(-1./(complex(1,0)./eps_temp)));
+        epsMerm = Mermin(q,w,osc.G(j),osc.Om(j));
+        eps1 = eps1 + osc.A(j)*(complex(1,0)./epsMerm);
     end
     eps = complex(1,0)./eps1;
     if strcmp(interface,'bulk')
@@ -100,16 +72,10 @@ elseif strcmp( osc.model,'Mermin')
         ELF = imag(-1./(eps+1));
     end
 elseif strcmp( osc.model,'Mermin_LL')
-    eps1 = zeros(numel(w),numel(q));
+    eps1 = zeros(size(q));
     for j=1:length(osc.A)
-        if isfield(osc,'numion') && j>length(osc.A) - osc.numion
-            epsMerm = Mermin_LL(q,w,osc.G(j),osc.Om(j),osc.u,true);
-            ind = bsxfun(@ne,epsMerm,0);
-            eps1(ind) = eps1(ind) + osc.A(j)*(complex(1,0)./epsMerm(ind));
-        else
-            epsMerm = Mermin_LL(q,w,osc.G(j),osc.Om(j),osc.u,false);
-            eps1 = eps1 + osc.A(j)*(complex(1,0)./epsMerm);
-        end       
+        epsMerm = Mermin_LL(q,w,osc.G(j),osc.Om(j),osc.u,false);
+        eps1 = eps1 + osc.A(j)*(complex(1,0)./epsMerm);
     end
     eps = complex(1,0)./eps1;
     ELF = imag(-1./eps);

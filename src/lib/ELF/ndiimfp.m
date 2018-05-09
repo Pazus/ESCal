@@ -21,7 +21,7 @@ else
     end
     
     osc.qtran = q/a0;
-    ELF=eps_sum_test(osc,'bulk');
+    ELF=eps_sum_allwq(osc,'bulk');
 
     res = ELF./q;
     res(isnan(res))=0;

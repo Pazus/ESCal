@@ -22,8 +22,8 @@ else
         q(:,i) = qmin + (i-1)*(qmax-qmin)/2.^(decdigs-1);
     end
     
-    theta = 0:pi/6:pi/2;
-    phi = 0:2*pi/10:2*pi;
+    theta = 0:pi/10:pi/2;
+    phi = 0:2*pi/20:2*pi;
     
     Im = zeros(length(osc.eloss),2^(decdigs-1)+1,length(theta));
     
@@ -126,6 +126,7 @@ else
     %% siimfp/biimfp
     siimfp = trapz(osc.eloss,x_in,1);
     biimfp = trapz(osc.eloss,x_in_b+x_b,1);
+    biimfp(biimfp<0)=0;
 %     iimfp = trapz(osc.eloss,x_in_b+x_b+x_in,1);
     figure;
     plot(depth,siimfp,depth,biimfp,depth,siimfp+biimfp)

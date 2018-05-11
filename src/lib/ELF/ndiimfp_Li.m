@@ -17,13 +17,13 @@ else
     qmax = sqrt(2*E0/h2ev)+sqrt(2*(E0/h2ev-osc.eloss/h2ev));
     
     q = zeros(length(osc.eloss),2^(decdigs-1)+1);
-    
+
     for i = 1:2^(decdigs-1)+1
         q(:,i) = qmin + (i-1)*(qmax-qmin)/2.^(decdigs-1);
     end
     
-    theta = 0:pi/10:pi/2;
-    phi = 0:2*pi/20:2*pi;
+    theta = 0:pi/2/5:pi/2;
+    phi = 0:2*pi/10:2*pi;
     
     Im = zeros(length(osc.eloss),2^(decdigs-1)+1,length(theta));
     
@@ -57,6 +57,7 @@ else
     ELF = eps_sum_allwq(osc,'bulk');
     res = ELF./q;
     res(isnan(res))=0;
+
     for i=1:length(osc.eloss)
         for j = 1:length(depth)
             x_b(i,j) = 1/pi/(E0/h2ev)*stepfunction(-depth(j)) * trapz(q(i,:),res(i,:))/h2ev/a0;
@@ -81,6 +82,7 @@ else
     ind = bsxfun(@gt,depth,0);
     romall_in(:,:,:,:,ind) = 0;
     res_in = squeeze(trapz(theta,trapz(phi,romall_in,4),3));
+
     for i=1:length(osc.eloss)
         for j = 1:length(depth)
             x_in_b(i,j) = (-2)*cosd(alpha)/(pi^3) * trapz(q(i,:),res_in(i,:,j),2) /h2ev/a0;
@@ -150,9 +152,11 @@ else
     
     %     diimfp = x_b(2,:)./trapz(osc.eloss,x_b(2,:));
     %     dsep = (x_in_clear_b + x_in_b + x_in)./trapz(osc.eloss,x_in_clear_b + x_in_b + x_in);
+    x_in_s = x_b + x_in_b + x_in;
+    int_over_depth_dsep = trapz(depth,x_in_s,2);
     
-    dsep = x_in;
-    diimfp = x_b;
+    dsep = int_over_depth_dsep./trapz(osc.eloss,int_over_depth_dsep);
+    diimfp = x_b(:,1)./trapz(osc.eloss,x_b(:,1));
     
 end
 

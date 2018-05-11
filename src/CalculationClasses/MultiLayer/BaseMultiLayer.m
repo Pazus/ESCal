@@ -18,6 +18,7 @@ classdef BaseMultiLayer < handle
         dE;
         N;
         M;
+        vacuum;
     end
     
     properties (Hidden = true)

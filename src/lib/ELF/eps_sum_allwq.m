@@ -42,7 +42,8 @@ if strcmp( osc.model,'Drude')
         ind = bsxfun(@gt,w,osc.egap);
         eps_im(ind,:) = eps_im(ind,:) + osc.A(j)*epsDrud_im(ind,:);
     end
-    eps = complex(eps_re,eps_im);
+%     eps = complex(eps_re,eps_im);
+    eps = eps_re+1i*eps_im;
     if strcmp(interface,'bulk')
         ELF = imag(-1./eps);
     elseif strcmp(interface,'surface')

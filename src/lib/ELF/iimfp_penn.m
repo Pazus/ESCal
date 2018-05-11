@@ -1,19 +1,30 @@
-function diimfp = nrm_diimfp_penn(osc,E0)
+function iimfp = iimfp_penn(Ef,E0)
 %%
 %{
-   Calculates the normalised DIIMFP (in eV^-1) 
-   from data for the dielectric loss function, i.e. 
-   the imaginary part of the reciprocal of the dielectric function.
+   Calculates the IMFP values from optical data.
    The Penn algoritm is used.
-   \param [in] w   - the energy loss array for which the diimfp is to be calculated
-   \param [in] osc - the struct containing information on the oscilattor parameters
-   \param [in] the Fermi energy
+   \param [in] Ef - the Fermi energy
    \param [in] E0 - the energy for which the diimfp is to be calculated
 %}
 %%
 
-    ELF = eps_sum(osc);
-    w = osc.eloss/h2ev;
+l = load('aupal'); %load a file with Palik's data
+au = l.au;
+%structure of the experimental data file:
+% 1 column - energy
+% 2 column - n
+% 3 column - k
+
+eps1 = au(:,2).^2-au(:,3).^2;
+eps2 = 2*au(:,2).*au(:,3);
+
+x = au(:,1);
+
+ind = find(histc(E0-Ef,x));
+Im = eps2./(eps1.^2+eps2.^2);
+
+w = x(1:ind)/h2ev;
+ELF = Im(1:ind);
     
     x_in = zeros(length(w),1);
     
@@ -47,7 +58,7 @@ function diimfp = nrm_diimfp_penn(osc,E0)
             end
         end
     end
-    diimfp = x_in; % ./ trapz(osc.eloss,x_in);
+    iimfp = 1/trapz(x(1:ind),x_in);
 end
 
 function x = ddmfpp_integrand(de,hwp)

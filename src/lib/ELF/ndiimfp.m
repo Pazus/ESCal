@@ -20,6 +20,10 @@ else
         q(:,i) = qmin + (i-1)*(qmax-qmin)/2.^(decdigs-1);
     end
     
+    if strcmp( osc.model,'Mermin')
+        q(q==0) = 0.01;
+    end
+    
     osc.qtran = q/a0;
     ELF=eps_sum_allwq(osc,'bulk');
 

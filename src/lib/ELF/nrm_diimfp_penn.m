@@ -52,7 +52,7 @@ function diimfp = nrm_diimfp_penn(osc,E0)
             end
         end
     end
-    diimfp = x_in ./ trapz(osc.eloss,x_in);
+    diimfp = x_in; % ./ trapz(osc.eloss,x_in);
 end
 
 function x = ddmfpp_integrand(de,hwp)

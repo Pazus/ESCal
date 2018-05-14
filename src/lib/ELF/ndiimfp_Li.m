@@ -1,4 +1,5 @@
 function [diimfp,dsep] = ndiimfp_Li(osc,E0,depth,alpha,decdigs,varargin)
+
 %%
 %{
    Calculates the normalised DIIMFP (in eV^-1*A^-1)
@@ -130,33 +131,27 @@ else
     biimfp = trapz(osc.eloss,x_in_b+x_b,1);
     biimfp(biimfp<0)=0;
 %     iimfp = trapz(osc.eloss,x_in_b+x_b+x_in,1);
-    figure;
-    plot(depth,siimfp,depth,biimfp,depth,siimfp+biimfp)
+%     figure;
+%     plot(depth,siimfp,depth,biimfp,depth,siimfp+biimfp)
     
     %% Plot
-    figure;
-    xlim([0 100])
-    hold on
-    box on
-    plot(osc.eloss,x_b(:,1))
-    plot(osc.eloss,x_b(:,1) + x_in_b(:,1))
-    plot(osc.eloss,x_in(:,1))
-    plot(osc.eloss,x_b(:,1) + x_in_b(:,1) + x_in(:,1))
-    legend('Clear bulk','Reduced bulk','Surface','DIIMFP');
+%     figure;
+%     xlim([0 100])
+%     hold on
+%     box on
+%     plot(osc.eloss,x_b(:,1))
+%     plot(osc.eloss,x_b(:,1) + x_in_b(:,1))
+%     plot(osc.eloss,x_in(:,1))
+%     plot(osc.eloss,x_b(:,1) + x_in_b(:,1) + x_in(:,1))
+%     legend('Clear bulk','Reduced bulk','Surface','DIIMFP');
     
 %     Y = ['siimfp = ',num2str(trapz(osc.eloss,x_in))];
 %     disp(Y);
 %     Y = ['biimfp = ',num2str(trapz(osc.eloss,x_in_b + x_in_clear_b))];
 %     disp(Y);
     
-    
-    %     diimfp = x_b(2,:)./trapz(osc.eloss,x_b(2,:));
-    %     dsep = (x_in_clear_b + x_in_b + x_in)./trapz(osc.eloss,x_in_clear_b + x_in_b + x_in);
-    x_in_s = x_b + x_in_b + x_in;
-    int_over_depth_dsep = trapz(depth,x_in_s,2);
-    
-    dsep = int_over_depth_dsep./trapz(osc.eloss,int_over_depth_dsep);
-    diimfp = x_b(:,1)./trapz(osc.eloss,x_b(:,1));
+    dsep = x_in+x_b(:,1)+x_b; %./trapz(osc.eloss,x_in);
+    diimfp = x_b(:,1); %./trapz(osc.eloss,x_b(:,1));
     
 end
 

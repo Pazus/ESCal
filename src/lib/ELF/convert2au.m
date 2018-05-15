@@ -13,6 +13,10 @@ if isfield(osc,'u')
     osc.u = osc.u/h2ev;
 end
 
+if isfield(osc,'egap')
+    osc.egap = osc.egap/h2ev;
+end
+
 X=osc;
 
 end

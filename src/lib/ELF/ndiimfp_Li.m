@@ -145,9 +145,9 @@ else
     plot(osc.eloss,x_b(:,1) + x_in_b(:,1) + x_in(:,1))
     legend('Clear bulk','Reduced bulk','Surface','DIIMFP');
     
-    Y = ['siimfp = ',num2str(trapz(osc.eloss,x_in))];
+    Y = ['siimfp = ',num2str(siimfp)];
     disp(Y);
-    Y = ['biimfp = ',num2str(trapz(osc.eloss,x_in_b + x_in_clear_b))];
+    Y = ['biimfp = ',num2str(biimfp)];
     disp(Y);
     
     %dsep = (x_in+x_b+x_in_b)./trapz(osc.eloss,x_in+x_b+x_in_b);

@@ -11,14 +11,10 @@ function diimfp = ndiimfp_romberg(osc,E0)
 x_in = zeros(length(osc.eloss),1);
 w = osc.eloss;
 
-for i=1:length(w) %-1
+for i=1:length(w) 
     qmin = sqrt(2*E0/h2ev)-sqrt(2*(E0/h2ev-w(i)/h2ev));
     qmax = sqrt(2*E0/h2ev)+sqrt(2*(E0/h2ev-w(i)/h2ev));
-    sum = rombint(osc,qmin/a0,qmax/a0,12,w(i)); %Romberg intergration
-%     osc.qtran = qmin/a0:0.01:qmax/a0;
-%     osc.eloss = w(i);
-%     ELF = eps_sum(osc);
-%     sum = trapz(osc.qtran,ELF);
+    sum = rombint(osc,qmin/a0,qmax/a0,17,w(i)); %Romberg intergration
     x_in(i) = sum/(pi*E0);
     if ~mod(i,1000)
         YY = [num2str(i) ,' from ', num2str(length(w)-1)];

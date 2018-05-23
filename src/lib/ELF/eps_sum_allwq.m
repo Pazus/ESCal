@@ -1,9 +1,10 @@
-function ELF = eps_sum(osc)
+function ELF = eps_sum_allwq(osc,interface)
 
 %%
 %{
    Calculates the imaginary part of the inverse dielectric function Im[-1/eps]
-   for the energy w and momentum transfer q on the basis of four ELF models.
+   for the energy array w and momentum transfer array q on the basis of four ELF models
+   for the consequent integration over all momentum transfers.
    Input parameter:
    osc is the field of oscilattors data including the follows:
          1. osc.A      - amplitudes
@@ -33,37 +34,48 @@ q = osc.qtran;
 
 if strcmp( osc.model,'Drude')
     
-    eps_re = osc.beps*ones(numel(w),numel(q));
-    eps_im = zeros(numel(w),numel(q));
+    eps_re = osc.beps*ones(size(q));
+    eps_im = zeros(size(q));
     for j=1:length(osc.A)
         [epsDrud_re, epsDrud_im] = Drude(q,w,osc.Om(j),osc.G(j),osc.alpha,osc.Ef);
         eps_re = eps_re - osc.A(j)*epsDrud_re;
-        eps_im(w>osc.egap,:) = eps_im(w>osc.egap,:) + osc.A(j)*epsDrud_im(w>osc.egap,:);
+        ind = bsxfun(@gt,w,osc.egap);
+        eps_im(ind,:) = eps_im(ind,:) + osc.A(j)*epsDrud_im(ind,:);
     end
-    eps = complex(eps_re,eps_im);
-    ELF = imag(-1./eps);
+%     eps = complex(eps_re,eps_im);
+    eps = eps_re+1i*eps_im;
+    if strcmp(interface,'bulk')
+        ELF = imag(-1./eps);
+    elseif strcmp(interface,'surface')
+        ELF = eps_im./((eps_re+1).^2 + eps_im.^2);
+    end
 elseif strcmp( osc.model,'DrudeLindhard')
     
-    eps_re = ones(numel(w),numel(q));
-    eps_im = zeros(numel(w),numel(q));
+    eps_re = zeros(size(q));
+    eps_im = zeros(size(q));
     for j=1:length(osc.A)
         [epsDrud_re, epsDrud_im] = DrudeLindhard(q,w,osc.Om(j),osc.G(j),osc.alpha,osc.Ef);
         eps_re = eps_re + osc.A(j)*epsDrud_re;
-        eps_im(w>osc.egap,:) = eps_im(w>osc.egap,:) + osc.A(j)*epsDrud_im(w>osc.egap,:);
+        ind = bsxfun(@gt,w,osc.egap);
+        eps_im(ind,:) = eps_im(ind,:) + osc.A(j)*epsDrud_im(ind,:);
     end
     ELF = eps_im;
 elseif strcmp( osc.model,'Mermin')
-    eps1 = zeros(numel(w),numel(q));
+    eps1 = zeros(size(q));
     for j=1:length(osc.A)
         epsMerm = Mermin(q,w,osc.G(j),osc.Om(j));
         eps1 = eps1 + osc.A(j)*(complex(1,0)./epsMerm);
     end
     eps = complex(1,0)./eps1;
-    ELF = imag(-1./eps);
+    if strcmp(interface,'bulk')
+        ELF = imag(-1./eps);
+    elseif strcmp(interface,'surface')
+        ELF = imag(-1./(eps+1));
+    end
 elseif strcmp( osc.model,'Mermin_LL')
-    eps1 = zeros(numel(w),numel(q));
+    eps1 = zeros(size(q));
     for j=1:length(osc.A)
-        epsMerm = Mermin_LL(q,w,osc.G(j),osc.Om(j),osc.u);
+        epsMerm = Mermin_LL(q,w,osc.G(j),osc.Om(j),osc.u,false);
         eps1 = eps1 + osc.A(j)*(complex(1,0)./epsMerm);
     end
     eps = complex(1,0)./eps1;

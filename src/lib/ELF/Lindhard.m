@@ -1,9 +1,9 @@
 function eps=Lindhard(q,omega,gamma,omega0)
 
-    sq = numel(q);
-    sw = numel(omega);
+%     sq = numel(q);
+%     sw = numel(omega);
     
-    q=q(:)';
+%     q=q(:)';
     omega = omega(:);
     
     n_dens = omega0^2 / (4.0*pi);

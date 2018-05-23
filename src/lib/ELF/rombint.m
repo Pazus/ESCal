@@ -35,7 +35,7 @@ else
    osc.eloss = w_current;
    romall = eps_sum(osc)./(osc.qtran*a0);
    romall(isnan(romall))=0;
-   h=b-a;
+   h=(b-a)*a0;
    rom(1,1)=h*(romall(:,1)+romall(:,end))./2;
    for i=2:decdigs
       st=2^(decdigs-i+1);

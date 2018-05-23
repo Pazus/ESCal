@@ -120,7 +120,7 @@ classdef (Abstract)  CoreMaterial < matlab.mixin.Copyable
             
             
             validateattributes(mesh_E,{'numeric'},{'nonempty','vector', 'column', 'nonnegative'}, 'SetManualDIIMFP', 'mesh_E');
-            validateattributes(DIIMFP,{'numeric'},{'nonempty','nonnegative','size',[numel(mesh_E), numel(obj.E0)]}, 'SetManualDIIMFP', 'DIIMFP');
+%             validateattributes(DIIMFP,{'numeric'},{'nonempty','nonnegative','size',[numel(mesh_E), numel(obj.E0)]}, 'SetManualDIIMFP', 'DIIMFP');
             
             if mesh_E(2)-mesh_E(1)<0
                 error('Check the energy mesh for DIIMFP: energy values must rise from min to max!');

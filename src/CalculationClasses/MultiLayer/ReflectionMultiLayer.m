@@ -3,7 +3,6 @@ classdef ReflectionMultiLayer<BaseMultiLayer
         theta                  = 0;
         phi                    = [];
         Fm;
-
     end
     
     methods
@@ -36,17 +35,17 @@ classdef ReflectionMultiLayer<BaseMultiLayer
 
             obj.Setup_energy_mesh_full;
             obj.RecalculateToEnergyDistribution;
-            if obj.vacuum
-                R = zeros(size(obj.FullEnergyDistribution{obj.N_Layer}.R(:,:,:,:)));
-            else
-                R = obj.FullEnergyDistribution{obj.N_Layer}.R(:,:,:,:);
-            end
+            R = obj.FullEnergyDistribution{obj.N_Layer}.R(:,:,:,:); %bulk (semiinf) signal
             M = size(R,4)-1;
             N_E =size(R,3);
             wT = zeros(size(obj.FullEnergyDistribution{1}.T));
             Tw = zeros(size(obj.FullEnergyDistribution{1}.T));
             for i_layer = (obj.N_Layer-1):-1:1
-                Rlocal = obj.FullEnergyDistribution{i_layer}.R(:,:,:,:);
+                if obj.vacuum && i_layer == 1
+                    Rlocal = zeros(size(R));
+                else
+                    Rlocal = obj.FullEnergyDistribution{i_layer}.R(:,:,:,:);
+                end
                 if strcmp(obj.CalculationMethod{i_layer},'SLA')
                     wT = obj.FullEnergyDistribution{i_layer}.T;
                     Tw = obj.FullEnergyDistribution{i_layer}.T;
@@ -54,9 +53,9 @@ classdef ReflectionMultiLayer<BaseMultiLayer
                     w = sparse(1:obj.ObjectsOfLayers{i_layer}.N, 1:obj.ObjectsOfLayers{i_layer}.N, obj.ObjectsOfLayers{i_layer}.mu_mesh_weights./obj.mu_mesh);
                     for m=0:M
                         for i=1:N_E
-                            if obj.vacuum && i_layer == obj.N_Layer-1
+                            if i_layer == 1 || i_layer == 2 % vacuum or surface
                                 wT(:,:,i,m+1) = obj.FullEnergyDistribution{i_layer}.L(:,:,i,m+1);
-                                Tw(:,:,i,m+1) = obj.FullEnergyDistribution{i_layer}.L(:,:,i,m+1);       
+                                Tw(:,:,i,m+1) = obj.FullEnergyDistribution{i_layer}.L(:,:,i,m+1);             
                             else
                                 wT(:,:,i,m+1) = w*obj.FullEnergyDistribution{i_layer}.T(:,:,i,m+1) + obj.FullEnergyDistribution{i_layer}.L(:,:,i,m+1);
                                 Tw(:,:,i,m+1) = obj.FullEnergyDistribution{i_layer}.T(:,:,i,m+1)*w + obj.FullEnergyDistribution{i_layer}.L(:,:,i,m+1);
@@ -64,7 +63,6 @@ classdef ReflectionMultiLayer<BaseMultiLayer
                         end
                     end
                 end
-                
                 [~, K_E]=min(abs(obj.energy_mesh_full-obj.ObjectsOfLayers{1}.Material.E0));
                 K_E = length(obj.energy_mesh_full)-K_E;
                 R = obj.DoubleLayer(Rlocal,Tw,R,wT,K_E);
@@ -73,9 +71,10 @@ classdef ReflectionMultiLayer<BaseMultiLayer
             obj.IsCalculated = true;
         end
         
-        function CalculateEnergyDistribution(obj,theta,phi)
+        function CalculateEnergyDistribution(obj,theta,phi,SolidAngle)
+            if nargin < 4; SolidAngle = 0; end
             if nargin < 3; phi = 0; end
-            obj.CalculateEnergyDistribution_E0(theta,phi);
+            obj.CalculateEnergyDistribution_E0(theta,phi,SolidAngle);
             convGauss (obj,obj.sigma_gauss);
             convLDS (obj,obj.sigma_LDS, obj.alpha_LDS);
         end

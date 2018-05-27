@@ -150,8 +150,9 @@ else
 %     Y = ['biimfp = ',num2str(trapz(osc.eloss,x_in_b + x_in_clear_b))];
 %     disp(Y);
     
-    dsep = x_in+x_b(:,1)+x_b; %./trapz(osc.eloss,x_in);
+    dsep = x_in+x_b(:,1)+x_in_b; %./trapz(osc.eloss,x_in);
     diimfp = x_b(:,1); %./trapz(osc.eloss,x_b(:,1));
+%     red_diimfp = x_in_b + x_b(:,1);
     
 end
 

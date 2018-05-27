@@ -1,8 +1,4 @@
-function eps=Mermin_LL(q,omega,gamma,omega0,omega_gap,isIonization)
-
-    if nargin < 5
-        isIonization=false;
-    end
+function eps=Mermin_LL(q,omega,gamma,omega0,omega_gap)
     
     q=q(:)';
     omega = omega(:);
@@ -18,8 +14,4 @@ function eps=Mermin_LL(q,omega,gamma,omega0,omega_gap,isIonization)
     bottom = bsxfun(@plus,1,bsxfun(@times,complex(0,g_over_w),z2)./z3);
     eps = bsxfun(@plus,1,top./bottom);
     
-%     if isIonization
-%         ind = bsxfun(@lt,omega,om_at_q);
-%         eps(ind)=0;
-%     end
 end

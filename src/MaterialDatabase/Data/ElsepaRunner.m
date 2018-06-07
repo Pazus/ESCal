@@ -35,7 +35,9 @@ classdef ElsepaRunner
             try
                 
                 cd(dir_Elsepa);
-                !gelscata.exe > out.txt
+%                 system(['elscata.exe < ' f_name]);
+%                 !gelscata.exe > out.txt
+                !source/elscata.exe > out.txt
                 cd(old_path);
                 
                 DELIMITER = ' ';

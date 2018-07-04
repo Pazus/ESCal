@@ -12,6 +12,13 @@ classdef MaterialPropertiesDatabase
             
             data=databaseCache.(materialName);
         end
+        
+        function list = getMaterialList()
+
+                MaterialDatabase = load('MaterialData.mat','MaterialData');
+                list = fields(MaterialDatabase.MaterialData);
+
+        end
     end
     
 end

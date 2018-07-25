@@ -1,9 +1,6 @@
 function eps=eps_LLX(q,omega,gamma,omega0,omega_gap)
-
-    sq = numel(q);
-    sw = numel(omega);
     
-    q=q(:)';
+%     q=q(:)';
     omega = omega(:);
     
     ogdif = omega_gap^2 + gamma^2;

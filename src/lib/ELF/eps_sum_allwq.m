@@ -74,7 +74,7 @@ elseif strcmp( osc.model,'Mermin')
 elseif strcmp( osc.model,'Mermin_LL')
     eps1 = zeros(size(q));
     for j=1:length(osc.A)
-        epsMerm = Mermin_LL(q,w,osc.G(j),osc.Om(j),osc.u,false);
+        epsMerm = Mermin_LL(q,w,osc.G(j),osc.Om(j),osc.u);
         eps1 = eps1 + osc.A(j)*(complex(1,0)./epsMerm);
     end
     eps = complex(1,0)./eps1;

@@ -35,7 +35,7 @@ else
     Q(indQ) = 0.0001;
     
     v_per = cosd(alpha).*sqrt(2*E0/h2ev);
-    r = depth./a0; %./cosd(alpha);
+    r = depth./a0./cosd(alpha);
     exdimr = repmat(qz, 1, 1, 1,length(phi), length(r)); %add extra dimension over r and phi
     qzrcos = bsxfun(@times,exdimr,reshape(r,1,1,1,1,[])).*cosd(alpha);
     

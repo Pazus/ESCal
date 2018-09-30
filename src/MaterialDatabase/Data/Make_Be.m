@@ -30,7 +30,7 @@ end
 
 Be.DIIMFP.E0 = [100;200;500;1000;2000;5000;10000;];
 for i=1:numel(Be.DIIMFP.E0)
-    WernerData = load([cd '\W_in\' Be.Mat num2str(Be.DIIMFP.E0(i)) '.diimfp']);
+    WernerData = load([cd '/W_in/' Be.Mat num2str(Be.DIIMFP.E0(i)) '.diimfp']);
     Be.DIIMFP.y(:,i) = WernerData(:,3);
     if i==1
         Be.DIIMFP.x = WernerData(:,1);

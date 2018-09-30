@@ -14,7 +14,7 @@ Ni.Ef = 9.1;
 
 Ni.DIIMFP.E0 = [100;200;500;1000;2000;5000;10000;];
 for i=1:numel(Ni.DIIMFP.E0)
-    WernerData = load([cd '\W_in\' Ni.Mat num2str(Ni.DIIMFP.E0(i)) '.diimfp']);
+    WernerData = load([cd '/W_in/' Ni.Mat num2str(Ni.DIIMFP.E0(i)) '.diimfp']);
     Ni.DIIMFP.y(:,i) = WernerData(:,3);
     if i==1
          Ni.DIIMFP.x = WernerData(:,1);

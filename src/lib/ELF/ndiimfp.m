@@ -46,7 +46,8 @@ else
     disp(Y);
     %}
 
-    diimfp = x_in; %./trapz(osc.eloss,x_in);
+    diimfp = x_in./trapz(osc.eloss,x_in); %normalized
+%     diimfp = x_in; %for imfp calculation
 end
 
 end

@@ -35,13 +35,7 @@ classdef ElsepaRunner
             try
                 
                 cd(dir_Elsepa);
-<<<<<<< HEAD
-                system(['source/elscata.exe < ' f_name]);
-%                 !gelscata.exe > out.txt
-%                 !source/elscata.exe > out.txt
-=======
                 !gelscata.exe > out.txt
->>>>>>> parent of b16231d... trying to start elsepa
                 cd(old_path);
                 
                 DELIMITER = ' ';

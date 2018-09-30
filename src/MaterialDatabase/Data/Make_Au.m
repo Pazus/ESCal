@@ -14,7 +14,7 @@ Au.Ef = 9.0;
 
 Au.DIIMFP.E0 = [10;15;20;25;30;35;40;45;50;60;70;80;90;100;200;500;1000;2000;5000;10000;];
 for i=1:numel(Au.DIIMFP.E0)
-    WernerData = load([cd '/W_in/' Au.Mat num2str(Au.DIIMFP.E0(i)) '.diimfp']);
+    WernerData = load([cd '/Users/olga/GitPazus/ESCal/src/MaterialDatabase/W_in/' Au.Mat num2str(Au.DIIMFP.E0(i)) '.diimfp']);
     if i==14
          Au.DIIMFP.x = WernerData(:,1);
     end

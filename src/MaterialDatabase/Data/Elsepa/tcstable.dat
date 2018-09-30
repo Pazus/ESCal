@@ -1,3 +1,4 @@
+<<<<<<< HEAD
  #  Total cross section table (last run of 'elscata').
  #
  #  Z =  42,   projectile: electron
@@ -126,3 +127,13 @@
    3.90000E+04  2.48003E-17  2.10734E-19  4.92556E-19  0.00000E+00  1.0E-07
    3.95000E+04  2.45682E-17  2.06338E-19  4.82799E-19  0.00000E+00  1.0E-07
    4.00000E+04  2.43410E-17  2.02086E-19  4.73348E-19  0.00000E+00  1.0E-07
+=======
+ #  Total cross section table (last run of 'elscata').
+ #
+ #  Z =   4,   projectile: electron
+ #
+ #   Energy         ECS         TCS1         TCS2         ABSCS      error
+ #    (eV)        (cm**2)      (cm**2)      (cm**2)      (cm**2)
+ #--------------------------------------------------------------------------
+   1.00000E+02  3.02403E-16  7.95979E-17  1.19341E-16  0.00000E+00  1.0E-07
+>>>>>>> parent of b16231d... trying to start elsepa

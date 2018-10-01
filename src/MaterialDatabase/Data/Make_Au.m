@@ -12,21 +12,16 @@ Au.Eg = 0;
 Au.Ep = 29.92;
 Au.Ef = 9.0;
 
-Au.DIIMFP.E0 = [10;15;20;25;30;35;40;45;50;60;70;80;90;100;200;500;1000;2000;5000;10000;];
+Au.DIIMFP.E0 = [100;200;500;1000;2000;5000;10000;];
 for i=1:numel(Au.DIIMFP.E0)
-    WernerData = load([cd '/W_in/' Au.Mat num2str(Au.DIIMFP.E0(i)) '.diimfp']);
-    if i==14
+    WernerData = load([cd '\W_in\' Au.Mat num2str(Au.DIIMFP.E0(i)) '.diimfp']);
+    Au.DIIMFP.y(:,i) = WernerData(:,3);
+    if i==1
          Au.DIIMFP.x = WernerData(:,1);
-    end
-    if i<14
-         neww = interp1(WernerData(:,1),WernerData(:,3),0:0.2:200);
-         Au.DIIMFP.y(:,i) = neww;
-    else
-         Au.DIIMFP.y(:,i) = WernerData(:,3);
     end
 end
 
-E0 = [10:5:50 60:10:90 100:20:500 600:100:2500 2750:250:5000 5500:500:40000]';
+E0 = [100:20:500 600:100:2500 2750:250:5000 5500:500:40000]';
 Au.Elastic.x = zeros(numel(E0),1);
 Au.Elastic.l_el = zeros(numel(E0),1);
 Au.Elastic.l_tr = zeros(numel(E0),1);

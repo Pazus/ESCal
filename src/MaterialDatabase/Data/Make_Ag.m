@@ -14,7 +14,7 @@ Ag.Ef = 7.2;
 
 Ag.DIIMFP.E0 = [100;200;500;1000;2000;5000;10000;];
 for i=1:numel(Ag.DIIMFP.E0)
-    WernerData = load([cd '/W_in/' Ag.Mat num2str(Ag.DIIMFP.E0(i)) '.diimfp']);
+    WernerData = load([cd '\W_in\' Ag.Mat num2str(Ag.DIIMFP.E0(i)) '.diimfp']);
     Ag.DIIMFP.y(:,i) = WernerData(:,3);
     if i==1
          Ag.DIIMFP.x = WernerData(:,1);

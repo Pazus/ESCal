@@ -1,4 +1,4 @@
-function diimfp = nrm_diimfp_penn(osc,E0)
+function diimfp = nrm_diimfp_penn(ELF,E0)
 %%
 %{
    Calculates the normalised DIIMFP (in eV^-1) 
@@ -11,9 +11,9 @@ function diimfp = nrm_diimfp_penn(osc,E0)
    \param [in] E0 - the energy for which the diimfp is to be calculated
 %}
 %%
-
-    ELF = eps_sum(osc);
-    w = osc.eloss/h2ev;
+    
+    x = ELF(:,1);
+    w = x(x<E0)/h2ev;
     
     x_in = zeros(length(w),1);
     
@@ -37,7 +37,7 @@ function diimfp = nrm_diimfp_penn(osc,E0)
                 if wlo>wpmax
                     wlo=wpmax;
                 end
-                temp = ELF(k)*(ddmfpp_integrand(hhw,wup)-ddmfpp_integrand(hhw,wlo));
+                temp = ELF(k,2)*(ddmfpp_integrand(hhw,wup)-ddmfpp_integrand(hhw,wlo));
                 if isnan(temp)
                     temp = 0;
                 end

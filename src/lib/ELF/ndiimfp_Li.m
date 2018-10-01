@@ -1,4 +1,4 @@
-function [diimfp,dsep] = ndiimfp_Li(osc,E0,depth,alpha,decdigs,varargin)
+function [diimfp,dsep,siimfp,biimfp] = ndiimfp_Li(osc,E0,depth,alpha,decdigs,varargin)
 
 %%
 %{
@@ -35,7 +35,7 @@ else
     Q(indQ) = 0.0001;
     
     v_per = cosd(alpha).*sqrt(2*E0/h2ev);
-    r = depth./a0; %./cosd(alpha);
+    r = depth./a0./cosd(alpha);
     exdimr = repmat(qz, 1, 1, 1,length(phi), length(r)); %add extra dimension over r and phi
     qzrcos = bsxfun(@times,exdimr,reshape(r,1,1,1,1,[])).*cosd(alpha);
     
@@ -135,25 +135,24 @@ else
 %     plot(depth,siimfp,depth,biimfp,depth,siimfp+biimfp)
     
     %% Plot
-    figure;
-    xlim([0 100])
-    hold on
-    box on
-    plot(osc.eloss,x_b(:,1))
-    plot(osc.eloss,x_b(:,1) + x_in_b(:,1))
-    plot(osc.eloss,x_in(:,1))
-    plot(osc.eloss,x_b(:,1) + x_in_b(:,1) + x_in(:,1))
-    legend('Clear bulk','Reduced bulk','Surface','DIIMFP');
-    
-    Y = ['siimfp = ',num2str(siimfp)];
-    disp(Y);
-    Y = ['biimfp = ',num2str(biimfp)];
-    disp(Y);
+%     figure;
+%     xlim([0 100])
+%     hold on
+%     box on
+%     plot(osc.eloss,x_b(:,1))
+%     plot(osc.eloss,x_b(:,1) + x_in_b(:,1))
+%     plot(osc.eloss,x_in(:,1))
+%     plot(osc.eloss,x_b(:,1) + x_in_b(:,1) + x_in(:,1))
+%     legend('Clear bulk','Reduced bulk','Surface','DIIMFP');
+%     
+%     Y = ['siimfp = ',num2str(siimfp)];
+%     disp(Y);
+%     Y = ['biimfp = ',num2str(biimfp)];
+%     disp(Y);
     
     %dsep = (x_in+x_b+x_in_b)./trapz(osc.eloss,x_in+x_b+x_in_b);
-    dsep = x_in./trapz(osc.eloss,x_in);   % only surface component
-    diimfp = x_b./trapz(osc.eloss,x_b);   % clear bulk
-    
+    dsep = x_in+x_b+x_in_b; %./trapz(osc.eloss,x_in);   % only surface component
+    diimfp = x_b; %./trapz(osc.eloss,x_b);   % clear bulk  
 end
 
 %% Heaviside function

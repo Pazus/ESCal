@@ -1,6 +1,6 @@
 function eps=Mermin_LL(q,omega,gamma,omega0,omega_gap)
     
-    q=q(:)';
+%     q=q(:)';
     omega = omega(:);
     
     om_at_q = omega0;

@@ -58,7 +58,6 @@ else
 
     diimfp = x_in./trapz(eloss,x_in); %normalized
     %diimfp = x_in; %for imfp calculation
-end
 
 end
 

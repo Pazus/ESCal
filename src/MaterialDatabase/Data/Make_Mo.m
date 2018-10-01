@@ -14,7 +14,7 @@ Mo.Ef = 6.5;
 
 Mo.DIIMFP.E0 = [200;500;1000;2000;5000;10000;];
 for i=1:numel(Mo.DIIMFP.E0)
-    WernerData = load([cd '/W_in/' Mo.Mat num2str(Mo.DIIMFP.E0(i)) '.diimfp']);
+    WernerData = load([cd '\W_in\' Mo.Mat num2str(Mo.DIIMFP.E0(i)) '.diimfp']);
     Mo.DIIMFP.y(:,i) = WernerData(:,3);
     if i==1
          Mo.DIIMFP.x = WernerData(:,1);

@@ -14,7 +14,7 @@ Ta.Ef = 8.4;
 
 Ta.DIIMFP.E0 = [100;200;500;1000;2000;5000;10000;];
 for i=1:numel(Ta.DIIMFP.E0)
-    WernerData = load([cd '/W_in/' Ta.Mat num2str(Ta.DIIMFP.E0(i)) '.diimfp']);
+    WernerData = load([cd '\W_in\' Ta.Mat num2str(Ta.DIIMFP.E0(i)) '.diimfp']);
     Ta.DIIMFP.y(:,i) = WernerData(:,3);
     if i==1
          Ta.DIIMFP.x = WernerData(:,1);

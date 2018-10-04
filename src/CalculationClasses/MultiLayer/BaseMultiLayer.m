@@ -18,7 +18,6 @@ classdef BaseMultiLayer < handle
         dE;
         N;
         M;
-        vacuum;
     end
     
     properties (Hidden = true)
@@ -136,7 +135,10 @@ classdef BaseMultiLayer < handle
     end
     
     methods %(Access = protected)
-        function CalculateEnergyDistribution_E0(obj,theta,phi)
+        function CalculateEnergyDistribution_E0(obj,theta,phi,SolidAngle)
+            % SolidAngle - (half polar) solid angle of detection (degrees)
+            % phi - azimuthal angle
+            if nargin < 4; SolidAngle = 0; end
             if nargin < 3; phi = 0; end
             if max(phi)>=360 || min(phi)<0
                 error('Elements of phi_mush must be in [0;360) range');
@@ -145,18 +147,29 @@ classdef BaseMultiLayer < handle
             if ~obj.IsCalculated; error('Not calculated yet.'); end
             
             cos_theta0 = cosd(obj.theta0);
-            cos_theta = cosd(theta);
-            TempEnergyDistribution = zeros(1,size(obj.FullEnergyDistribution{1}.R,3));
+            if SolidAngle>0
+                cos_theta = cosd(theta-SolidAngle:SolidAngle/100:theta+SolidAngle);
+            else
+                cos_theta = cosd(theta);
+            end
+            TempEnergyDistribution = zeros(length(cos_theta),size(obj.FullEnergyDistribution{1}.R,3));
             for i=1:size(obj.FullEnergyDistribution{1}.R,3)
                 for m=0:size(obj.FullEnergyDistribution{1}.R,4)-1
                     k = 2*cosd(m*phi);
                     if m == 0; k=k/2; end
-                    r0 = interp2(obj.mu_mesh,obj.mu_mesh,obj.Fm(:,:,i,m+1),cos_theta,cos_theta0); % new?????
-                    TempEnergyDistribution(i) = TempEnergyDistribution(i) + r0*k;
+                    r0 = interp2(obj.mu_mesh,obj.mu_mesh,obj.Fm(:,:,i,m+1),cos_theta,cos_theta0,'spline'); 
+                    TempEnergyDistribution(:,i) = TempEnergyDistribution(:,i) + (r0*k)';
                 end
             end
-            y_temp = interp1(obj.ObjectsOfLayers{1}.energy_mesh,TempEnergyDistribution,obj.energy_mesh_full);
-            y_temp(isnan(y_temp)) = 0;
+
+            if SolidAngle>0
+                y_temp_int = trapz(cos_theta,-TempEnergyDistribution,1);
+                y_temp = interp1(obj.ObjectsOfLayers{1}.energy_mesh,y_temp_int,obj.energy_mesh_full);
+                y_temp(isnan(y_temp)) = 0;
+            else
+                y_temp = interp1(obj.ObjectsOfLayers{1}.energy_mesh,TempEnergyDistribution,obj.energy_mesh_full);
+                y_temp(isnan(y_temp)) = 0;
+            end
             obj.EnergyDistribution = y_temp;
         end
         

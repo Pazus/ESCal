@@ -1,32 +1,36 @@
-function iimfp = iimfp_penn(Ef,E0)
+function iimfp = iimfp_penn(E0)
 %%
 %{
    Calculates the IMFP values from optical data.
-   The Penn algoritm is used.
-   \param [in] Ef - the Fermi energy
-   \param [in] E0 - the energy for which the diimfp is to be calculated
+   The Penn algoritm (SSPA) is used.
+   \param [in] E0 - the energy with respect to the Fermi level for which the diimfp is to be calculated
 %}
 %%
 
-l = load('aupal'); %load a file with Palik's data
+% l = load('aupal'); %load a file with Palik's data
+% au = l.au;
+% %structure of the experimental data file:
+% % 1 column - energy
+% % 2 column - n
+% % 3 column - k
+% 
+% eps1 = au(:,2).^2-au(:,3).^2;
+% eps2 = 2*au(:,2).*au(:,3);
+% 
+% x = au(:,1);
+% 
+% ind = find(histc(E0,x));
+% Im = eps2./(eps1.^2+eps2.^2);
+
+l = load('auopt'); %load a file with Palik's data
 au = l.au;
-%structure of the experimental data file:
-% 1 column - energy
-% 2 column - n
-% 3 column - k
+ind = find(histc(E0,au(:,1)));
+x = au(1:ind,1);
 
-eps1 = au(:,2).^2-au(:,3).^2;
-eps2 = 2*au(:,2).*au(:,3);
-
-x = au(:,1);
-
-ind = find(histc(E0-Ef,x));
-Im = eps2./(eps1.^2+eps2.^2);
-
-w = x(1:ind)/h2ev;
-ELF = Im(1:ind);
+w = x/h2ev;
+ELF = au(1:ind,4);
     
-    x_in = zeros(length(w),1);
+x_in = zeros(length(w),1);
     
     for i = 1:length(w)
         if w(i)<0.05
@@ -58,7 +62,7 @@ ELF = Im(1:ind);
             end
         end
     end
-    iimfp = 1/trapz(x(1:ind),x_in);
+    iimfp = 1/trapz(x,x_in);
 end
 
 function x = ddmfpp_integrand(de,hwp)

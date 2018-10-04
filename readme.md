@@ -118,3 +118,24 @@ Then,
 ```
 Rml = PESMultiLayer(Layers,MS,Methods);
 ```
+## To calculate additional DECS data with ELSEPA code
+
+The source paper https://www.sciencedirect.com/science/article/pii/S0010465504004795?via%3Dihub
+The class /src/MaterialDatabase/Data/ElsepaRunner.m is used to run the calculation of DECS data.
+
+For each material, elastic (and not only) data need to be calculated for, a file Make_<nameofmaterial>.m must be created.
+See examples in the folder /src/MaterialDatabase/Data/.
+	
+Let's take as an example Make_Au.m.
+The line 
+```
+E0 = [100:20:500 600:100:2500 2750:250:5000 5500:500:40000]';
+```
+determines the range of incident energies for which elastic scattering data are gonna be calculated.
+And
+```
+[data] = ElsepaRunner.RunElsepa(Au.Z,E0);
+```
+runs the ELSEPA code for a certain atomic number Z and all incident energies E0.
+
+To update the database MaterialData.mat MaterialData_script.m must be run with Make_<nameofmaterial>.m files included.

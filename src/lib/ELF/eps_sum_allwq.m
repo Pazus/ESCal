@@ -42,8 +42,7 @@ if strcmp( osc.model,'Drude')
         ind = bsxfun(@gt,w,osc.egap);
         eps_im(ind,:) = eps_im(ind,:) + osc.A(j)*epsDrud_im(ind,:);
     end
-%     eps = complex(eps_re,eps_im);
-    eps = eps_re+1i*eps_im;
+    eps = complex(eps_re,eps_im);
     if strcmp(interface,'bulk')
         ELF = imag(-1./eps);
     elseif strcmp(interface,'surface')
@@ -75,7 +74,7 @@ elseif strcmp( osc.model,'Mermin')
 elseif strcmp( osc.model,'Mermin_LL')
     eps1 = zeros(size(q));
     for j=1:length(osc.A)
-        epsMerm = Mermin_LL(q,w,osc.G(j),osc.Om(j),osc.u,false);
+        epsMerm = Mermin_LL(q,w,osc.G(j),osc.Om(j),osc.u);
         eps1 = eps1 + osc.A(j)*(complex(1,0)./epsMerm);
     end
     eps = complex(1,0)./eps1;

@@ -11,7 +11,7 @@ function b = isodd(x)
 %   E-mail:      pjacklam@online.no
 %   URL:         http://home.online.no/~pjacklam
 
-   error(nargchk(1, 1, nargin));
+   narginchk(1, 1);
    if ~isnumeric(x)
       error('Argument must be a numeric array.');
    end

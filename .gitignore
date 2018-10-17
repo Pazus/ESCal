@@ -1,4 +1,4 @@
-/src/lib/*.asv
+/src/**/*.asv
 **/src/MaterialDatabase/Data/Elsepa/*.f
 **/src/MaterialDatabase/Data/Elsepa/*.in
 **/src/MaterialDatabase/Data/Elsepa/*.txt

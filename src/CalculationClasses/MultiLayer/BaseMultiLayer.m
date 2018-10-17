@@ -242,54 +242,35 @@ classdef BaseMultiLayer < handle
                 tic;
                 N = obj.ObjectsOfLayers{i_layer}.N;
                 M = obj.ObjectsOfLayers{i_layer}.M;
-                FED{i_layer}.L = zeros(N, N, size(obj.ObjectsOfLayers{i_layer}.energy_mesh,1),M+1);
-                FED{i_layer}.R = zeros(N, N, size(obj.ObjectsOfLayers{i_layer}.energy_mesh,1),M+1);
-                FED{i_layer}.T = zeros(N, N, size(obj.ObjectsOfLayers{i_layer}.energy_mesh,1),M+1);
-                if isprop(obj.ObjectsOfLayers{i_layer}, 'Qm')
-                    FED{i_layer}.Q = zeros(N, N, size(obj.ObjectsOfLayers{i_layer}.energy_mesh,1),M+1);
-                end
-                
-                
+
                 EnDistr = obj.ObjectsOfLayers{i_layer}.CalculateEnergyConvolutions';
-                                
+
                 tau_tot = obj.ObjectsOfLayers{i_layer}.Layer.tau_tot;
                 mu = obj.mu_mesh;
                 lambda = obj.ObjectsOfLayers{i_layer}.Layer.Material.lambda;
-                
-                sL = size(FED{i_layer}.L);
-                L = zeros(sL);
+
+                sL = [N, N, size(obj.ObjectsOfLayers{i_layer}.energy_mesh,1), M+1];
 
                 calcR = isprop(obj.ObjectsOfLayers{i_layer}, 'Rm');
                 calcT = isprop(obj.ObjectsOfLayers{i_layer}, 'Tm');
                 calcQ = isprop(obj.ObjectsOfLayers{i_layer}, 'Qm');
                 
-                if calcR; R = zeros(sL); end
-                if calcT; T = zeros(sL); end
-                if calcQ; Q = zeros(sL); end
-                
                 curLayer = obj.ObjectsOfLayers{i_layer};
                 
-                curLayerLm = zeros([sL(1:2) obj.N_in+1]);
+                curLayerLm = zeros([N, N, obj.N_in+1]);
                 curLayerLm(:,:,1) = diag(exp(-tau_tot./mu));
 
                 if isfinite(tau_tot) 
                     for j=1:obj.N_in
                         curLayerLm(:,:,j+1) = curLayerLm(:,:,j).*diag((1-lambda)*tau_tot/j./mu);
                     end    
-                end    
-
-                Lm = reshape(reshape(curLayerLm,sL(1)^2,[])*EnDistr,sL(1),sL(2),[]);
+                end
                 
-                L = repmat(Lm,1,1,1,M);
+                FED{i_layer}.L = repmat( reshape(reshape(curLayerLm,N^2,[])*EnDistr,N,N,[]) ,1,1,1,M+1);
+                if calcR; FED{i_layer}.R = obj.expandOnEnergyMesh(curLayer.Rm, EnDistr, sL); end
+                if calcT; FED{i_layer}.T = obj.expandOnEnergyMesh(curLayer.Tm, EnDistr, sL); end
+                if calcQ; FED{i_layer}.Q = obj.expandOnEnergyMesh(curLayer.Qm, EnDistr, sL); end
                 
-                if calcR; R = obj.expandOnEnergyMesh(curLayer.Rm, EnDistr, sL); end
-                if calcT; T = obj.expandOnEnergyMesh(curLayer.Tm, EnDistr, sL); end
-                if calcQ; Q = obj.expandOnEnergyMesh(curLayer.Qm, EnDistr, sL); end
-                
-                FED{i_layer}.L = L;
-                if calcR; FED{i_layer}.R = R; end
-                if calcT; FED{i_layer}.T = T; end
-                if calcQ; FED{i_layer}.Q = Q; end
                 time=toc;
                 disp(['Calculating time (FED) of the layer ', num2str(i_layer), ': ', num2str(time),' sec.']);
             end

@@ -152,15 +152,26 @@ classdef BaseMultiLayer < handle
             else
                 cos_theta = cosd(theta);
             end
-            TempEnergyDistribution = zeros(length(cos_theta),size(obj.FullEnergyDistribution{1}.R,3));
-            for i=1:size(obj.FullEnergyDistribution{1}.R,3)
-                for m=0:size(obj.FullEnergyDistribution{1}.R,4)-1
-                    k = 2*cosd(m*phi);
-                    if m == 0; k=k/2; end
-                    r0 = interp2(obj.mu_mesh,obj.mu_mesh,obj.Fm(:,:,i,m+1),cos_theta,cos_theta0,'spline'); 
-                    TempEnergyDistribution(:,i) = TempEnergyDistribution(:,i) + (r0*k)';
-                end
-            end
+
+            % try to find small range of mu_mesh neighbours to simplify
+            % interpolation problem
+            i1 = interp1(obj.mu_mesh,1:numel(obj.mu_mesh),cos_theta);
+            i2 = interp1(obj.mu_mesh,1:numel(obj.mu_mesh),cos_theta0);
+            ii1=max(1,min(floor(i1))-1):min(max(ceil(i1))+1,numel(obj.mu_mesh));% if isscalar(ii1); ii1 = [ii1; ii1+1]; end
+            ii2=max(1,min(floor(i2))-1):min(max(ceil(i2))+1,numel(obj.mu_mesh));% if isscalar(ii2); ii2 = [ii2; ii2+1]; end
+            
+            % sum y m with k-weights to make problem 3D from 4D
+            M = size(obj.FullEnergyDistribution{1}.R,4)-1;
+            k=2*cosd((0:M)*phi);k(1)=k(1)/2;
+            Fm=sum(bsxfun(@times,obj.Fm(ii1,ii2,:,:),reshape(k,1,1,1,[])),4);
+            
+            % fake mesh, original and target points remain the same so no
+            % interpolation by 3rd dimension occures in fact
+            in_mesh = 1:size(obj.Fm,3);
+            TempEnergyDistribution = interpn(obj.mu_mesh(ii1),obj.mu_mesh(ii2),in_mesh,Fm,cos_theta,cos_theta0,in_mesh,'spline');
+            %second dimension (theta0) is always a singleton, so we remove
+            %it leasing matrix as (numel(theta),numel(energy_mesh)
+            TempEnergyDistribution = reshape(TempEnergyDistribution,length(cos_theta),size(obj.FullEnergyDistribution{1}.R,3));
 
             if SolidAngle>0
                 y_temp_int = trapz(cos_theta,-TempEnergyDistribution,1);
@@ -231,64 +242,42 @@ classdef BaseMultiLayer < handle
                 tic;
                 N = obj.ObjectsOfLayers{i_layer}.N;
                 M = obj.ObjectsOfLayers{i_layer}.M;
-                FED{i_layer}.L = zeros(N, N, size(obj.ObjectsOfLayers{i_layer}.energy_mesh,1),M+1);
-                FED{i_layer}.R = zeros(N, N, size(obj.ObjectsOfLayers{i_layer}.energy_mesh,1),M+1);
-                FED{i_layer}.T = zeros(N, N, size(obj.ObjectsOfLayers{i_layer}.energy_mesh,1),M+1);
-                if isprop(obj.ObjectsOfLayers{i_layer}, 'Qm')
-                    FED{i_layer}.Q = zeros(N, N, size(obj.ObjectsOfLayers{i_layer}.energy_mesh,1),M+1);
-                end
-                
-                
+
                 EnDistr = obj.ObjectsOfLayers{i_layer}.CalculateEnergyConvolutions';
-                                
+
                 tau_tot = obj.ObjectsOfLayers{i_layer}.Layer.tau_tot;
                 mu = obj.mu_mesh;
                 lambda = obj.ObjectsOfLayers{i_layer}.Layer.Material.lambda;
-                
-                sL = size(FED{i_layer}.L);
-                L = zeros(sL);
+
+                sL = [N, N, size(obj.ObjectsOfLayers{i_layer}.energy_mesh,1), M+1];
 
                 calcR = isprop(obj.ObjectsOfLayers{i_layer}, 'Rm');
                 calcT = isprop(obj.ObjectsOfLayers{i_layer}, 'Tm');
                 calcQ = isprop(obj.ObjectsOfLayers{i_layer}, 'Qm');
                 
-                if calcR; R = zeros(sL); end
-                if calcT; T = zeros(sL); end
-                if calcQ; Q = zeros(sL); end
-                
                 curLayer = obj.ObjectsOfLayers{i_layer};
                 
-                curLayerLm = zeros([sL(1:2) obj.N_in+1]);
+                curLayerLm = zeros([N, N, obj.N_in+1]);
                 curLayerLm(:,:,1) = diag(exp(-tau_tot./mu));
 
                 if isfinite(tau_tot) 
                     for j=1:obj.N_in
                         curLayerLm(:,:,j+1) = curLayerLm(:,:,j).*diag((1-lambda)*tau_tot/j./mu);
                     end    
-                end    
-
-                Lm = reshape(reshape(curLayerLm,sL(1)^2,[])*EnDistr,sL(1),sL(2),[]);
-                
-                for m=0:M
-
-                    L(:,:,:,m+1) = Lm;
-                    if calcR; R(:,:,:,m+1)   = reshape(reshape(curLayer.Rm(:,:,:, m+1),sL(1)^2,[])*EnDistr,sL(1),sL(2),[]); end;
-                    if calcT; T(:,:,:,m+1)   = reshape(reshape(curLayer.Tm(:,:,:, m+1),sL(1)^2,[])*EnDistr,sL(1),sL(2),[]); end;
-                    if calcQ; Q(:,:,:,m+1) = reshape(reshape(curLayer.Qm(:,:,:, m+1),sL(1)^2,[])*EnDistr,sL(1),sL(2),[]); end;
-                    
                 end
                 
-                FED{i_layer}.L = L;
-                if calcR; FED{i_layer}.R = R; end
-                if calcT; FED{i_layer}.T = T; end
-                if calcQ; FED{i_layer}.Q = Q; end
+                FED{i_layer}.L = repmat( reshape(reshape(curLayerLm,N^2,[])*EnDistr,N,N,[]) ,1,1,1,M+1);
+                if calcR; FED{i_layer}.R = obj.expandOnEnergyMesh(curLayer.Rm, EnDistr, sL); end
+                if calcT; FED{i_layer}.T = obj.expandOnEnergyMesh(curLayer.Tm, EnDistr, sL); end
+                if calcQ; FED{i_layer}.Q = obj.expandOnEnergyMesh(curLayer.Qm, EnDistr, sL); end
+                
                 time=toc;
                 disp(['Calculating time (FED) of the layer ', num2str(i_layer), ': ', num2str(time),' sec.']);
             end
             
             obj.FullEnergyDistribution = FED;
         end
-
+        
         function Setup_energy_mesh_full(obj, varargin)
             p = 0;
             if size(obj.energy_mesh_full)~=size(obj.Layers(1).Material.DIIMFP_E)
@@ -330,6 +319,22 @@ classdef BaseMultiLayer < handle
             
         end
         
+    end
+    
+    methods( Access = private)
+        function R = expandOnEnergyMesh(obj, F, EnDistr, sL)
+%             R = zeros(sL(1)*sL(2), sL(3), sL(4));
+%             F = reshape(F,sL(1)*sL(2), size(F,3), []);
+%             
+%             for m=1:sL(4)
+%                 R(:,:,m) = F(:,:,m)*EnDistr;
+%             end
+%             
+%             R = reshape(R,sL(1),sL(2),sL(3),sL(4));
+
+            R = permute(reshape(reshape(permute(F,[1,2,4,3]),sL(1)*sL(2)*size(F,4),[]) * EnDistr, sL(1),sL(2),sL(4),[]),[1,2,4,3]);
+
+        end
     end
     
     methods (Abstract = true)

@@ -26,29 +26,15 @@ function R = conv3d(x,y,shape, K)
     
     x_reshaped = reshape(x_short,N,[],M);
     y_reshaped = reshape(permute(y_short,[1,3,2,4]),[],N,M);
-
-    for m=1:M
-        x_local2 = x_reshaped(:,:,m);
-        y_local2 = y_reshaped(:,:,m);
-        
-        Rm = zeros(N,N,s3);
-        if strcmpi(shape,'right') %useEnergy
-            for i=1:s3
-                TempConv = x_local2(:,(i-1)*N+1:end)*y_local2(1:end-(i-1)*N,:);
-                Rm(:,:,i) = TempConv;
-            end
-        else
-            for i=1:s3
-                TempConv = x_local2(:,1:i*N)*y_local2(end-i*N+1:end,:);
-                Rm(:,:,i) = TempConv;
-            end
+    
+    if M>1
+        parfor m=1:M
+            x_local2 = x_reshaped(:,:,m);
+            y_local2 = y_reshaped(:,:,m);            
+            R(:,:,:,m) = doCalc(x_local2, y_local2, N, s3, shape);
         end
-        
-        if strcmpi(shape,'right') %useEnergy
-            R(:,:,:,m) = Rm;
-        else
-            R(:,:,:,m) = Rm;
-        end
+    else
+        R = doCalc(x_reshaped, y_reshaped, N, s3, shape);
     end
     
     if K>0
@@ -59,4 +45,17 @@ function R = conv3d(x,y,shape, K)
         end
     end
     
+end
+
+function Rm = doCalc(x_local2, y_local2, N, s3, shape)
+    Rm = zeros(N,N,s3);
+    if strcmpi(shape,'right') %useEnergy
+        for i=1:s3
+            Rm(:,:,i) = x_local2(:,(i-1)*N+1:end)*y_local2(1:end-(i-1)*N,:);
+        end
+    else
+        for i=1:s3
+            Rm(:,:,i) = x_local2(:,1:i*N)*y_local2(end-i*N+1:end,:);
+        end
+    end
 end

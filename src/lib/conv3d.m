@@ -20,25 +20,28 @@ function R = conv3d(x,y,shape, K)
     end
     
     R = zeros(size(x_short));
+    
+    s3 = size(x_short,3);    
+    M = size(x,4);
+    
+    x_reshaped = reshape(x_short,N,[],M);
+    y_reshaped = reshape(permute(y_short,[1,3,2,4]),[],N,M);
 
-    parfor m=1:size(x,4)
+    for m=1:M
+        x_local2 = x_reshaped(:,:,m);
+        y_local2 = y_reshaped(:,:,m);
         
-        x_local = x_short(:,:,:,m);
-        y_flipped = y_short(:,:,:,m);
-
-        s3 = size(x_local,3);
-        
-        Rm = zeros(size(x_local));
-        x_reshaped = reshape(x_local,N,[]);
-        y_reshaped = reshape(permute(y_flipped,[1,3,2]),[],N);
-        
-        for i=1:s3
-            if strcmpi(shape,'right') %useEnergy
-                TempConv = x_reshaped(:,(i-1)*N+1:end)*y_reshaped(1:end-(i-1)*N,:);
-            else
-                TempConv = x_reshaped(:,1:i*N)*y_reshaped(end-i*N+1:end,:);
+        Rm = zeros(N,N,s3);
+        if strcmpi(shape,'right') %useEnergy
+            for i=1:s3
+                TempConv = x_local2(:,(i-1)*N+1:end)*y_local2(1:end-(i-1)*N,:);
+                Rm(:,:,i) = TempConv;
             end
-            Rm(:,:,i) = TempConv;
+        else
+            for i=1:s3
+                TempConv = x_local2(:,1:i*N)*y_local2(end-i*N+1:end,:);
+                Rm(:,:,i) = TempConv;
+            end
         end
         
         if strcmpi(shape,'right') %useEnergy

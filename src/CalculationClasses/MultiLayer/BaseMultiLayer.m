@@ -102,19 +102,15 @@ classdef BaseMultiLayer < handle
                end
             end
         end
-        
-        
-        
-        
-        
-        
+
         function Solution_ABCD = DoubleLayer(obj,A,B,C,D,K)
             % A + B*C*D
-            if ~isempty(D)
-            if nargin < 6 && isempty(K); K = 0; end
             tic
-            %  Solution_ABCD = A + conv3d(conv3d(B,C,1,'same')*obj.dE,D,1,'same')*obj.dE ;
-            Solution_ABCD = A + conv3d(conv3d(B,C,'right',K)*obj.dE,D,'right',K)*obj.dE ;
+            if ~isempty(D)
+                if nargin < 6 && isempty(K); K = 0; end
+                
+                %  Solution_ABCD = A + conv3d(conv3d(B,C,1,'same')*obj.dE,D,1,'same')*obj.dE ;
+                Solution_ABCD = A + conv3d(conv3d(B,C,'right',K)*obj.dE,D,'right',K)*obj.dE ;
             else
                 if isempty(A) && ~isempty(B)
                     Solution_ABCD = conv3d(B,C,'right',K)*obj.dE;

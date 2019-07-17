@@ -1,4 +1,4 @@
-function eps=Lindhard(q,omega,gamma,omega0)
+function [eps,epsimag]=Lindhard(q,omega,gamma,omega0)
 
 %     sq = numel(q);
 %     sw = numel(omega);
@@ -14,18 +14,23 @@ function eps=Lindhard(q,omega,gamma,omega0)
     chi = sqrt(1.0 / (pi*v_f));
     
     z1_1 = omega./(q*v_f);
+    z1_1(isnan(z1_1)) = 0;
     
-    z1 = bsxfun(@plus,bsxfun(@plus,z1_1,z),1j*gamma./(q*v_f));
-    d1 = vos_g(z1);
-    z2 = bsxfun(@plus,bsxfun(@minus,z1_1,z),1j*gamma./(q*v_f));
-    d2 = vos_g(z2);
+    gq = gamma./(q*v_f); gq(isnan(gq)) = 0;
+    [reD1, imD1] = vos_g(z1_1 + z, gq);
+    [reD2, imD2] = vos_g(z1_1 - z, gq);
     
-    zzz = z.^3;
-    red1_d2 = real(d1) - real(d2);
-    imd1_d2 = imag(d1) - imag(d2);
+    red1_d2 = reD1 - reD2;
+    imd1_d2 = imD1 - imD2;
     
-    epsreal = bsxfun(@plus,1,bsxfun(@times,red1_d2 ,chi^2./(4 * zzz)));
-    epsimag = bsxfun(@times,imd1_d2 ,chi^2./(4 * zzz));
-    eps = complex(epsreal,epsimag);
+    chizzz = chi^2./(z.*z.*z * 4);
+    epsreal = 1 + red1_d2 .* chizzz;
+    epsimag = imd1_d2 .* chizzz;
+    if nargout == 1
+        eps = complex(epsreal,epsimag);
+    else
+        eps = epsreal;
+        % epsimag = epsimag
+    end
 
 end

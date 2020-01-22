@@ -1,5 +1,5 @@
 function Ta = Make_Ta()
-%% Cu
+%% Ta
 load('Ta.mat');
 Ta.Mat = 'Ta';
 Ta.M = 180.9479;

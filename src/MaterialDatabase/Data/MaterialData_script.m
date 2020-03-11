@@ -50,5 +50,6 @@ MaterialData.Ta=Make_Ta;
 MaterialData.Mo=Make_Mo;
 
 MaterialData.Hf=Make_Hf;
+MaterialData.Li=Make_Li;
 
-clear Au Al Si Ag i Z Z2 O Nb Cu C W Be Mg H C_diamond C_glassy Ni Ti V Pd Mo Ta Hf Ca
+clear Au Al Si Ag i Z Z2 O Nb Cu C W Be Mg H C_diamond C_glassy Ni Ti V Pd Mo Ta Hf Ca Li

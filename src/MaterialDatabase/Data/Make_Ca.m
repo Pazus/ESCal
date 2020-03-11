@@ -1,7 +1,7 @@
 function Ca = Make_Ca()
 %% Ca
 % load('Ña.mat');
-Ca.Mat = 'Ña';
+Ca.Mat = 'Ca';
 Ca.M = 40.078;
 Ca.Z = 20; %g/mol
 Ca.Density = 1.55; %g/cm^-3

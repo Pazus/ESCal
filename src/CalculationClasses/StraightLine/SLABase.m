@@ -11,7 +11,7 @@ classdef SLABase < BaseLayerCalculation
         function obj = SLABase(Layer)
             obj = obj@BaseLayerCalculation(Layer);
 
-            obj.CalculateCrossSection;
+            %obj.CalculateCrossSection;
         end
         
         function Calculate(obj)

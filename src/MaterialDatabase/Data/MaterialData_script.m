@@ -23,6 +23,8 @@ MaterialData.Cu = Make_Cu;
 
 MaterialData.C = Make_C;
 
+MaterialData.Ca = Make_Ca;
+
 MaterialData.C_diamond = Make_C_diamond;
 
 MaterialData.C_glassy = Make_C_glassy;
@@ -47,4 +49,7 @@ MaterialData.Ta=Make_Ta;
 
 MaterialData.Mo=Make_Mo;
 
-clear Au Al Si Ag i Z Z2 O Nb Cu C W Be Mg H C_diamond C_glassy Ni Ti V Pd Mo Ta
+MaterialData.Hf=Make_Hf;
+MaterialData.Li=Make_Li;
+
+clear Au Al Si Ag i Z Z2 O Nb Cu C W Be Mg H C_diamond C_glassy Ni Ti V Pd Mo Ta Hf Ca Li

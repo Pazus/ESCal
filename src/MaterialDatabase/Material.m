@@ -407,9 +407,7 @@ classdef Material < CoreMaterial
     
     methods (Static = true)
         function MaterialList = GetMaterialList()
-            Data = load(Material.databaseFileName);
-            
-            MaterialList = fields(Data.MaterialData);
+            MaterialList = MaterialPropertiesDatabase.getMaterialList();
         end
     end
     
